@@ -1,6 +1,14 @@
 package org.hkprog.m365gui;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import hk.quantr.javalib.CommonLib;
+import java.io.InputStream;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import org.json.JSONObject;
+import org.json.JSONArray;
+import org.hkprog.m365gui.commandPanel.loginPanel;
 
 /**
  *
@@ -13,26 +21,52 @@ public class MainFrame extends javax.swing.JFrame {
 	 */
 	public MainFrame() {
 		initComponents();
-		// Add Microsoft 365 CLI commands to functionTree
-		javax.swing.tree.DefaultMutableTreeNode root = new javax.swing.tree.DefaultMutableTreeNode("Microsoft 365 CLI");
-
-		// Example categories and commands
-		String[][] categories = {
-			{"User", "user list", "user get", "user add", "user remove"},
-			{"Group", "group list", "group get", "group add", "group remove"},
-			{"Site", "site list", "site get", "site add", "site remove"},
-			{"Team", "team list", "team get", "team add", "team remove"},
-			{"Mail", "mail send", "mail list", "mail get"}
-		};
-
-		for (String[] category : categories) {
-			javax.swing.tree.DefaultMutableTreeNode catNode = new javax.swing.tree.DefaultMutableTreeNode(category[0]);
-			for (int i = 1; i < category.length; i++) {
-				catNode.add(new javax.swing.tree.DefaultMutableTreeNode(category[i]));
+		// Load Microsoft 365 CLI commands from JSON file
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new TreeNodeData("Microsoft 365 CLI", null));
+		try {
+			InputStream is = getClass().getResourceAsStream("/m365cli-commands.json");
+			if (is != null) {
+				byte[] bytes = is.readAllBytes();
+				String jsonText = new String(bytes);
+				JSONArray arr = new JSONArray(jsonText);
+				for (int i = 0; i < arr.length(); i++) {
+					JSONObject obj = arr.getJSONObject(i);
+					String category = obj.getString("category");
+					String catIcon = obj.optString("icon", null);
+					JSONArray commands = obj.getJSONArray("commands");
+					DefaultMutableTreeNode catNode = new DefaultMutableTreeNode(new TreeNodeData(category, catIcon));
+					for (int j = 0; j < commands.length(); j++) {
+						JSONObject cmdObj = commands.getJSONObject(j);
+						String cmdName = cmdObj.getString("name");
+						String cmdIcon = cmdObj.optString("icon", null);
+						catNode.add(new DefaultMutableTreeNode(new TreeNodeData(cmdName, cmdIcon)));
+					}
+					root.add(catNode);
+				}
 			}
-			root.add(catNode);
+		} catch (Exception e) {
+			root.add(new DefaultMutableTreeNode(new TreeNodeData("Failed to load commands", null)));
 		}
-		functionTree.setModel(new javax.swing.tree.DefaultTreeModel(root));
+		functionTree.setModel(new DefaultTreeModel(root));
+		functionTree.setCellRenderer(new javax.swing.tree.DefaultTreeCellRenderer() {
+			@Override
+			public java.awt.Component getTreeCellRendererComponent(javax.swing.JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+				java.awt.Component c = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+				if (value instanceof DefaultMutableTreeNode) {
+					Object userObj = ((DefaultMutableTreeNode) value).getUserObject();
+					if (userObj instanceof TreeNodeData) {
+						TreeNodeData data = (TreeNodeData) userObj;
+						if (data.iconPath != null) {
+							java.net.URL iconUrl = getClass().getResource("/" + data.iconPath);
+							if (iconUrl != null) {
+								setIcon(new javax.swing.ImageIcon(iconUrl));
+							}
+						}
+					}
+				}
+				return c;
+			}
+		});
 		expandAllButtonActionPerformed(null);
 	}
 
@@ -55,6 +89,8 @@ public class MainFrame extends javax.swing.JFrame {
         expandAllButton = new javax.swing.JButton();
         collapseAllButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
+        mainScrollPane = new javax.swing.JScrollPane();
+        mainPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -74,6 +110,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel2.setLayout(new java.awt.BorderLayout());
 
+        functionTree.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                functionTreeMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(functionTree);
 
         jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -98,22 +139,18 @@ public class MainFrame extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jPanel2);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 2912, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1600, Short.MAX_VALUE)
-        );
+        jPanel3.setLayout(new java.awt.BorderLayout());
+
+        mainScrollPane.setViewportView(mainPanel);
+
+        jPanel3.add(mainScrollPane, java.awt.BorderLayout.CENTER);
 
         jSplitPane1.setRightComponent(jPanel3);
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
-        pack();
+        setSize(new java.awt.Dimension(3217, 1688));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void expandAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_expandAllButtonActionPerformed
@@ -123,6 +160,23 @@ public class MainFrame extends javax.swing.JFrame {
     private void collapseAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapseAllButtonActionPerformed
 		CommonLib.expandAll(functionTree, false);
     }//GEN-LAST:event_collapseAllButtonActionPerformed
+
+    private void functionTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_functionTreeMouseClicked
+        if (evt.getClickCount() == 2) {
+            javax.swing.tree.TreePath path = functionTree.getPathForLocation(evt.getX(), evt.getY());
+            if (path != null) {
+                Object nodeObj = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
+                if (nodeObj instanceof TreeNodeData) {
+                    TreeNodeData data = (TreeNodeData) nodeObj;
+                    if ("login".equalsIgnoreCase(data.name)) {
+                        mainPanel.add(new loginPanel());
+                        mainPanel.revalidate();
+                        mainPanel.repaint();
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_functionTreeMouseClicked
 
 	/**
 	 * @param args the command line arguments
@@ -134,20 +188,9 @@ public class MainFrame extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
 		 */
 		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+			UIManager.setLookAndFeel(new FlatIntelliJLaf());
+		} catch (Exception ex) {
+			System.err.println("Failed to initialize LaF");
 		}
 		//</editor-fold>
 
@@ -171,5 +214,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel logoLabel;
     private hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel m365guiLogoLabel;
+    private javax.swing.JPanel mainPanel;
+    private javax.swing.JScrollPane mainScrollPane;
     // End of variables declaration//GEN-END:variables
 }
