@@ -141,6 +141,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel3.setLayout(new java.awt.BorderLayout());
 
+        mainPanel.setLayout(new javax.swing.BoxLayout(mainPanel, javax.swing.BoxLayout.Y_AXIS));
         mainScrollPane.setViewportView(mainPanel);
 
         jPanel3.add(mainScrollPane, java.awt.BorderLayout.CENTER);
@@ -149,7 +150,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(3217, 1688));
+        setSize(new java.awt.Dimension(790, 604));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -161,6 +162,15 @@ public class MainFrame extends javax.swing.JFrame {
 		CommonLib.expandAll(functionTree, false);
     }//GEN-LAST:event_collapseAllButtonActionPerformed
 
+    private void addMessageComponent(java.awt.Component comp) {
+        javax.swing.JPanel wrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
+        wrapper.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 8, 8, 8)); // margin
+        wrapper.add(comp, java.awt.BorderLayout.CENTER);
+        mainPanel.add(wrapper);
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
     private void functionTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_functionTreeMouseClicked
         if (evt.getClickCount() == 2) {
             javax.swing.tree.TreePath path = functionTree.getPathForLocation(evt.getX(), evt.getY());
@@ -169,9 +179,7 @@ public class MainFrame extends javax.swing.JFrame {
                 if (nodeObj instanceof TreeNodeData) {
                     TreeNodeData data = (TreeNodeData) nodeObj;
                     if ("login".equalsIgnoreCase(data.name)) {
-                        mainPanel.add(new loginPanel());
-                        mainPanel.revalidate();
-                        mainPanel.repaint();
+                        addMessageComponent(new loginPanel());
                     }
                 }
             }
