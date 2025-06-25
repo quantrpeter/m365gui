@@ -12,7 +12,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.json.JSONObject;
 import org.json.JSONArray;
-import org.hkprog.m365gui.commandPanel.loginPanel;
+import org.hkprog.m365gui.commandPanel.LoginPanel;
+import org.hkprog.m365gui.commandPanel.ResultPanel;
 
 /**
  *
@@ -211,7 +212,19 @@ public class MainFrame extends javax.swing.JFrame {
 				if (nodeObj instanceof TreeNodeData) {
 					TreeNodeData data = (TreeNodeData) nodeObj;
 					if ("login".equalsIgnoreCase(data.name)) {
-						addMessageComponent(new loginPanel());
+						LoginPanel panel = new LoginPanel("login");
+						addMessageComponent(panel);
+						String result = panel.execute();
+						ResultPanel resultPanel = new ResultPanel();
+						resultPanel.jTextArea1.setText(result);
+						addMessageComponent(resultPanel);
+					}else if ("info".equalsIgnoreCase(data.name)) {
+						LoginPanel panel = new LoginPanel("tenant info get");
+						addMessageComponent(panel);
+						String result = panel.execute();
+						ResultPanel resultPanel = new ResultPanel();
+						resultPanel.jTextArea1.setText(result);
+						addMessageComponent(resultPanel);
 					}
 				}
 			}
@@ -224,7 +237,7 @@ public class MainFrame extends javax.swing.JFrame {
 		dialog.setVisible(true);
 		if (!dialog.isCancelled()) {
 			try {
-				setting.m365Path=dialog.m365PathTextField.getText();
+				setting.m365Path = dialog.m365PathTextField.getText();
 				QuantrSettingLibrary.save("m365gui", setting);
 			} catch (Exception ex) {
 				Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);

@@ -14,7 +14,7 @@ public class SettingDialog extends javax.swing.JDialog {
 	public SettingDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
-		
+
 		m365PathTextField.setText(MainFrame.setting.m365Path);
 	}
 
@@ -53,6 +53,7 @@ public class SettingDialog extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         m365PathTextField = new javax.swing.JTextField();
+        browseM365PathButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -82,6 +83,13 @@ public class SettingDialog extends javax.swing.JDialog {
 
         jLabel1.setText("M365 Command Path");
 
+        browseM365PathButton.setText("...");
+        browseM365PathButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseM365PathButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -90,7 +98,9 @@ public class SettingDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(m365PathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                .addComponent(m365PathTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(browseM365PathButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -99,13 +109,14 @@ public class SettingDialog extends javax.swing.JDialog {
                 .addGap(16, 16, 16)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(m365PathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(21, Short.MAX_VALUE))
+                    .addComponent(m365PathTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(browseM365PathButton))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        setBounds(0, 0, 453, 121);
+        setBounds(0, 0, 900, 116);
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
@@ -122,6 +133,62 @@ public class SettingDialog extends javax.swing.JDialog {
 		cancelled = true;
 		setVisible(false);
     }//GEN-LAST:event_formWindowClosing
+
+    private void browseM365PathButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseM365PathButtonActionPerformed
+		javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+		fileChooser.setDialogTitle("Select M365 CLI Executable");
+		fileChooser.setFileSelectionMode(javax.swing.JFileChooser.FILES_ONLY);
+
+		// Set current path if exists
+		String currentPath = m365PathTextField.getText().trim();
+		if (!currentPath.isEmpty()) {
+			java.io.File currentFile = new java.io.File(currentPath);
+			if (currentFile.exists()) {
+				fileChooser.setSelectedFile(currentFile);
+			} else if (currentFile.getParentFile() != null && currentFile.getParentFile().exists()) {
+				fileChooser.setCurrentDirectory(currentFile.getParentFile());
+			}
+		} else {
+			// Default to common locations on macOS
+			String[] commonPaths = {
+				"/usr/local/bin",
+				"/opt/homebrew/bin",
+				System.getProperty("user.home") + "/.nvm/versions/node/v24.2.0/bin"
+			};
+			for (String path : commonPaths) {
+				java.io.File dir = new java.io.File(path);
+				if (dir.exists()) {
+					fileChooser.setCurrentDirectory(dir);
+					break;
+				}
+			}
+		}
+
+		// On Unix/macOS, executables don't have extensions, so we'll use a custom file filter
+		javax.swing.filechooser.FileFilter executableFilter = new javax.swing.filechooser.FileFilter() {
+			@Override
+			public boolean accept(java.io.File f) {
+				if (f.isDirectory()) {
+					return true; // Allow directories for navigation
+				}
+				// Check if file is executable
+				return f.canExecute() && !f.getName().contains(".");
+			}
+			
+			@Override
+			public String getDescription() {
+				return "Executable files";
+			}
+		};
+		fileChooser.addChoosableFileFilter(executableFilter);
+		fileChooser.setAcceptAllFileFilterUsed(true);
+
+		int result = fileChooser.showOpenDialog(this);
+		if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
+			java.io.File selectedFile = fileChooser.getSelectedFile();
+			m365PathTextField.setText(selectedFile.getAbsolutePath());
+		}
+    }//GEN-LAST:event_browseM365PathButtonActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -166,6 +233,7 @@ public class SettingDialog extends javax.swing.JDialog {
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton browseM365PathButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
