@@ -19,6 +19,7 @@ public class LoginPanel extends javax.swing.JPanel implements CommandPanel {
 	public LoginPanel(String command) {
 		this.command = command;
 		initComponents();
+		jLabel1.setText(command);
 	}
 
 	/**
