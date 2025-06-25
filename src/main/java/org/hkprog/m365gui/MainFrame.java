@@ -2,7 +2,11 @@ package org.hkprog.m365gui;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import hk.quantr.javalib.CommonLib;
+import hk.quantr.setting.library.QuantrSettingLibrary;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -16,11 +20,22 @@ import org.hkprog.m365gui.commandPanel.loginPanel;
  */
 public class MainFrame extends javax.swing.JFrame {
 
+	public static Setting setting = new Setting();
+
 	/**
 	 * Creates new form MainFrame
 	 */
 	public MainFrame() {
 		initComponents();
+		try {
+			QuantrSettingLibrary.load("m365gui", setting);
+		} catch (IOException ex) {
+			Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IllegalArgumentException ex) {
+			Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (IllegalAccessException ex) {
+			Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		// Load Microsoft 365 CLI commands from JSON file
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new TreeNodeData("Microsoft 365 CLI", null));
 		try {
@@ -78,9 +93,6 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        m365guiLogoLabel = new hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel();
-        logoLabel = new hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -91,20 +103,13 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         mainScrollPane = new javax.swing.JScrollPane();
         mainPanel = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        m365guiLogoLabel = new hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel();
+        jToolBar1 = new javax.swing.JToolBar();
+        settingButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        m365guiLogoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/m365gui.png"))); // NOI18N
-        m365guiLogoLabel.setPreferredSize(new java.awt.Dimension(50, 50));
-        jPanel1.add(m365guiLogoLabel);
-
-        logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/logo.png"))); // NOI18N
-        logoLabel.setPreferredSize(new java.awt.Dimension(50, 50));
-        jPanel1.add(logoLabel);
-
-        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         jSplitPane1.setDividerLocation(300);
 
@@ -150,6 +155,33 @@ public class MainFrame extends javax.swing.JFrame {
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
+        jPanel5.setLayout(new java.awt.BorderLayout());
+
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        m365guiLogoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/m365gui.png"))); // NOI18N
+        m365guiLogoLabel.setPreferredSize(new java.awt.Dimension(50, 50));
+        jPanel1.add(m365guiLogoLabel);
+
+        jPanel5.add(jPanel1, java.awt.BorderLayout.NORTH);
+
+        jToolBar1.setRollover(true);
+
+        settingButton.setText("Setting");
+        settingButton.setFocusable(false);
+        settingButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        settingButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        settingButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(settingButton);
+
+        jPanel5.add(jToolBar1, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(jPanel5, java.awt.BorderLayout.NORTH);
+
         setSize(new java.awt.Dimension(790, 604));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
@@ -162,29 +194,43 @@ public class MainFrame extends javax.swing.JFrame {
 		CommonLib.expandAll(functionTree, false);
     }//GEN-LAST:event_collapseAllButtonActionPerformed
 
-    private void addMessageComponent(java.awt.Component comp) {
-        javax.swing.JPanel wrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
-        wrapper.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 8, 8, 8)); // margin
-        wrapper.add(comp, java.awt.BorderLayout.CENTER);
-        mainPanel.add(wrapper);
-        mainPanel.revalidate();
-        mainPanel.repaint();
-    }
+	private void addMessageComponent(java.awt.Component comp) {
+		javax.swing.JPanel wrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
+		wrapper.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 8, 8, 8)); // margin
+		wrapper.add(comp, java.awt.BorderLayout.CENTER);
+		mainPanel.add(wrapper);
+		mainPanel.revalidate();
+		mainPanel.repaint();
+	}
 
     private void functionTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_functionTreeMouseClicked
-        if (evt.getClickCount() == 2) {
-            javax.swing.tree.TreePath path = functionTree.getPathForLocation(evt.getX(), evt.getY());
-            if (path != null) {
-                Object nodeObj = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
-                if (nodeObj instanceof TreeNodeData) {
-                    TreeNodeData data = (TreeNodeData) nodeObj;
-                    if ("login".equalsIgnoreCase(data.name)) {
-                        addMessageComponent(new loginPanel());
-                    }
-                }
-            }
-        }
+		if (evt.getClickCount() == 2) {
+			javax.swing.tree.TreePath path = functionTree.getPathForLocation(evt.getX(), evt.getY());
+			if (path != null) {
+				Object nodeObj = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
+				if (nodeObj instanceof TreeNodeData) {
+					TreeNodeData data = (TreeNodeData) nodeObj;
+					if ("login".equalsIgnoreCase(data.name)) {
+						addMessageComponent(new loginPanel());
+					}
+				}
+			}
+		}
     }//GEN-LAST:event_functionTreeMouseClicked
+
+    private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingButtonActionPerformed
+		SettingDialog dialog = new SettingDialog(this, true);
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
+		if (!dialog.isCancelled()) {
+			try {
+				setting.m365Path=dialog.m365PathTextField.getText();
+				QuantrSettingLibrary.save("m365gui", setting);
+			} catch (Exception ex) {
+				Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+    }//GEN-LAST:event_settingButtonActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -218,11 +264,13 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
-    private hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel logoLabel;
+    private javax.swing.JToolBar jToolBar1;
     private hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel m365guiLogoLabel;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JScrollPane mainScrollPane;
+    private javax.swing.JButton settingButton;
     // End of variables declaration//GEN-END:variables
 }
