@@ -1,15 +1,20 @@
 package org.hkprog.m365gui.commandPanel;
 
+import hk.quantr.javalib.CommonLib;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.hkprog.m365gui.MainFrame;
+
 /**
  *
  * @author Peter <peter@quantr.hk>
  */
-public class LogoutPanel extends javax.swing.JPanel {
+public class ResultPanel extends javax.swing.JPanel implements CommandPanel {
 
 	/**
 	 * Creates new form loginPanel
 	 */
-	public LogoutPanel() {
+	public ResultPanel() {
 		initComponents();
 	}
 
@@ -21,15 +26,14 @@ public class LogoutPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setBackground(new java.awt.Color(255, 204, 255));
 
-        jLabel1.setFont(new java.awt.Font("Kannada MN", 0, 48)); // NOI18N
-        jLabel1.setText("Logout");
-
-        jButton1.setText("Run");
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -37,25 +41,32 @@ public class LogoutPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 155, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
+
+	@Override
+	public String execute() {
+		try {
+			String str = CommonLib.runCommand(MainFrame.setting.m365Path + " tenant info get");
+			return str;
+		} catch (Exception ex) {
+			Logger.getLogger(ResultPanel.class.getName()).log(Level.SEVERE, null, ex);
+			return ex.getMessage();
+		}
+	}
 }

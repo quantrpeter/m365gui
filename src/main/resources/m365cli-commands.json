@@ -6,6 +6,10 @@
       { "name": "version", "icon": "famfamfam/information.png" }
     ]
   },
+  { "category": "Tenant", "icon": "famfamfam/bullet_star.png", "commands": [
+      { "name": "info", "icon": "famfamfam/bullet_pink.png" }
+    ]
+  },
   { "category": "User", "icon": "famfamfam/user.png", "commands": [
       { "name": "user list", "icon": "famfamfam/user.png" },
       { "name": "user get", "icon": "famfamfam/user_go.png" },

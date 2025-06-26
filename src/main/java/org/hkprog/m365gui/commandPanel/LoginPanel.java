@@ -1,20 +1,25 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package org.hkprog.m365gui.commandPanel;
+
+import hk.quantr.javalib.CommonLib;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.hkprog.m365gui.MainFrame;
 
 /**
  *
  * @author Peter <peter@quantr.hk>
  */
-public class loginPanel extends javax.swing.JPanel {
+public class LoginPanel extends javax.swing.JPanel implements CommandPanel {
+
+	String command;
 
 	/**
 	 * Creates new form loginPanel
 	 */
-	public loginPanel() {
+	public LoginPanel(String command) {
+		this.command = command;
 		initComponents();
+		jLabel1.setText(command);
 	}
 
 	/**
@@ -31,7 +36,7 @@ public class loginPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(204, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Kannada MN", 0, 48)); // NOI18N
-        jLabel1.setText("Login");
+        jLabel1.setText("m365 login");
 
         jButton1.setText("Run");
 
@@ -64,4 +69,15 @@ public class loginPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
+
+	@Override
+	public String execute() {
+		try {
+			String str = CommonLib.runCommand(MainFrame.setting.m365Path + " " + command);
+			return str;
+		} catch (Exception ex) {
+			Logger.getLogger(LoginPanel.class.getName()).log(Level.SEVERE, null, ex);
+			return ex.getMessage();
+		}
+	}
 }

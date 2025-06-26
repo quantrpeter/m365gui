@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.hkprog</groupId>
-	<artifactId>microsoft365-cli-gui</artifactId>
+	<artifactId>m365gui</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
 	<developers>
@@ -23,23 +23,29 @@
 			</properties>
 		</developer>
 	</developers>
-    <properties>
+	<repositories>
+		<repository>
+			<id>quantr</id>
+			<url>https://maven.quantr.hk/repo</url>
+		</repository>
+	</repositories>
+	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.release>23</maven.compiler.release>
+		<maven.compiler.release>21</maven.compiler.release>
 		<exec.mainClass>org.hkprog.microsoft365.cli.gui.Microsoft365CliGui</exec.mainClass>
 	</properties>
-    <dependencies>
-        <dependency>
-            <groupId>hk.quantr</groupId>
-            <artifactId>quantr-java-library</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20250107</version>
-            <type>jar</type>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>hk.quantr</groupId>
+			<artifactId>quantr-java-library</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20250107</version>
+			<type>jar</type>
+		</dependency>
 		<dependency>
 			<groupId>com.formdev</groupId>
 			<artifactId>flatlaf</artifactId>
@@ -50,5 +56,31 @@
 			<artifactId>flatlaf-intellij-themes</artifactId>
 			<version>3.6</version>
 		</dependency>
-    </dependencies>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.24.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.24.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-swing</artifactId>
+			<version>1.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-transcoder</artifactId>
+			<version>1.17</version>
+		</dependency>
+	 <dependency>
+	  <groupId>hk.quantr</groupId>
+	  <artifactId>quantr-setting-library</artifactId>
+	  <version>1.0</version>
+	  <type>jar</type>
+	 </dependency>
+	</dependencies>
 </project>
