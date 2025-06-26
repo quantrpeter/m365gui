@@ -9,6 +9,7 @@ import javax.swing.tree.DefaultTreeModel;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.hkprog.m365gui.commandPanel.loginPanel;
+import org.hkprog.m365gui.commandPanel.logoutPanel;
 
 /**
  *
@@ -141,6 +142,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel3.setLayout(new java.awt.BorderLayout());
 
+        mainPanel.setBackground(new java.awt.Color(255, 255, 255));
         mainPanel.setLayout(new javax.swing.BoxLayout(mainPanel, javax.swing.BoxLayout.Y_AXIS));
         mainScrollPane.setViewportView(mainPanel);
 
@@ -163,9 +165,12 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_collapseAllButtonActionPerformed
 
     private void addMessageComponent(java.awt.Component comp) {
-        javax.swing.JPanel wrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
+        javax.swing.JPanel wrapper = new javax.swing.JPanel();
+		wrapper.setOpaque(false);
+        wrapper.setLayout(new javax.swing.BoxLayout(wrapper, javax.swing.BoxLayout.X_AXIS));
         wrapper.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 8, 8, 8)); // margin
-        wrapper.add(comp, java.awt.BorderLayout.CENTER);
+        wrapper.add(comp);
+        wrapper.setMaximumSize(wrapper.getPreferredSize()); // Prevent vertical stretching
         mainPanel.add(wrapper);
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -180,6 +185,8 @@ public class MainFrame extends javax.swing.JFrame {
                     TreeNodeData data = (TreeNodeData) nodeObj;
                     if ("login".equalsIgnoreCase(data.name)) {
                         addMessageComponent(new loginPanel());
+                    }else if ("logout".equalsIgnoreCase(data.name)) {
+                        addMessageComponent(new logoutPanel());
                     }
                 }
             }
