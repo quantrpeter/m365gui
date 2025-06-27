@@ -197,11 +197,11 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel7.setLayout(new java.awt.BorderLayout());
         jPanel7.add(sPOPanel1, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("tab2", jPanel7);
+        jTabbedPane1.addTab("SPO", jPanel7);
 
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(1281, 987));
+        setSize(new java.awt.Dimension(1784, 987));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
