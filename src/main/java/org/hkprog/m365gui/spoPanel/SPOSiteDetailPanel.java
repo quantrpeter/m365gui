@@ -1,5 +1,17 @@
 package org.hkprog.m365gui.spoPanel;
 
+import hk.quantr.javalib.CommonLib;
+import org.hkprog.m365gui.MainFrame;
+import org.hkprog.m365gui.MyLib;
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author Peter <peter@quantr.hk>
@@ -28,6 +40,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         listPanel = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         refreshButton = new javax.swing.JButton();
+        filterTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         listTable = new javax.swing.JTable();
 
@@ -48,19 +61,25 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         });
         jToolBar1.add(refreshButton);
 
+        filterTextField.setMaximumSize(new java.awt.Dimension(200, 23));
+        filterTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                filterTextFieldKeyReleased(evt);
+            }
+        });
+        jToolBar1.add(filterTextField);
+
         listPanel.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         listTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
+        listTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         jScrollPane1.setViewportView(listTable);
 
         listPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -70,12 +89,74 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+	private List<Map<String, Object>> originalData = new ArrayList<>();
+	private List<String> columnNames = new ArrayList<>();
+
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        
+		String json = MyLib.run(MainFrame.setting.m365Path + " spo list list --webUrl " + webUrl + " --output json");
+		try {
+			org.json.JSONArray arr = new org.json.JSONArray(json);
+			TableModelList model = new TableModelList(arr);
+			listTable.setModel(model);
+			CommonLib.autoResizeColumn(listTable);
+			// Store original data and columns for filtering
+			originalData.clear();
+			columnNames.clear();
+			for (int i = 0; i < arr.length(); i++) {
+				org.json.JSONObject obj = arr.getJSONObject(i);
+				Map<String, Object> row = new HashMap<>();
+				Iterator<String> it = obj.keys();
+				while (it.hasNext()) {
+					String key = it.next();
+					row.put(key, obj.get(key));
+				}
+				originalData.add(row);
+			}
+			if (arr.length() > 0) {
+				Iterator<String> it = arr.getJSONObject(0).keys();
+				while (it.hasNext()) {
+					String key = it.next();
+					if (!columnNames.contains(key)) {
+						columnNames.add(key);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
     }//GEN-LAST:event_refreshButtonActionPerformed
+
+    private void filterTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterTextFieldKeyReleased
+		String filter = filterTextField.getText().toLowerCase().trim();
+		System.out.println(filter);
+		if (filter.isEmpty()) {
+			// Show all
+			org.json.JSONArray arr = new org.json.JSONArray();
+			for (Map<String, Object> row : originalData) {
+				arr.put(new org.json.JSONObject(row));
+			}
+			listTable.setModel(new TableModelList(arr));
+			CommonLib.autoResizeColumn(listTable);
+			return;
+		}
+		org.json.JSONArray filteredArr = new org.json.JSONArray();
+		for (Map<String, Object> row : originalData) {
+			for (String key : columnNames) {
+				Object value = row.get(key);
+				System.out.println(value);
+				if (value != null && value.toString().toLowerCase().contains(filter)) {
+					filteredArr.put(new org.json.JSONObject(row));
+					break;
+				}
+			}
+		}
+		listTable.setModel(new TableModelList(filteredArr));
+		CommonLib.autoResizeColumn(listTable);
+    }//GEN-LAST:event_filterTextFieldKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField filterTextField;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
@@ -83,4 +164,5 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     private javax.swing.JTable listTable;
     private javax.swing.JButton refreshButton;
     // End of variables declaration//GEN-END:variables
+
 }

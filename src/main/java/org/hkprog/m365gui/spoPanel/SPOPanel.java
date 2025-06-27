@@ -1,18 +1,13 @@
 package org.hkprog.m365gui.spoPanel;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import javax.swing.ImageIcon;
-import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,9 +28,9 @@ public class SPOPanel extends javax.swing.JPanel {
 	 */
 	public SPOPanel() {
 		initComponents();
-		
+
 		// Set up custom tree cell renderer
-		jTree1.setCellRenderer(new SPOTreeCellRenderer());
+		siteTree.setCellRenderer(new SPOTreeCellRenderer());
 
 		// Add filter functionality
 		setupFilterTextField();
@@ -75,25 +70,25 @@ public class SPOPanel extends javax.swing.JPanel {
 	 */
 	private void filterTree() {
 		String filterText = filterTextField.getText().toLowerCase().trim();
-		
+
 		if (filterText.isEmpty()) {
 			// Show all sites if filter is empty
-			jTree1.setModel(new DefaultTreeModel(originalRoot));
+			siteTree.setModel(new DefaultTreeModel(originalRoot));
 		} else {
 			// Create filtered tree
 			DefaultMutableTreeNode filteredRoot = new DefaultMutableTreeNode("SharePoint Online Sites");
-			
+
 			DefaultMutableTreeNode teamSites = new DefaultMutableTreeNode("Team Sites");
 			DefaultMutableTreeNode communicationSites = new DefaultMutableTreeNode("Communication Sites");
 			DefaultMutableTreeNode otherSites = new DefaultMutableTreeNode("Other Sites");
-			
+
 			// Filter sites based on title or URL
 			for (SiteInfo siteInfo : allSites) {
-				if (siteInfo.title.toLowerCase().contains(filterText) || 
-					siteInfo.url.toLowerCase().contains(filterText)) {
-					
+				if (siteInfo.title.toLowerCase().contains(filterText)
+						|| siteInfo.url.toLowerCase().contains(filterText)) {
+
 					DefaultMutableTreeNode siteNode = new DefaultMutableTreeNode(siteInfo);
-					
+
 					// Add to appropriate category
 					if (siteInfo.template.contains("SITEPAGEPUBLISHING")) {
 						communicationSites.add(siteNode);
@@ -104,7 +99,7 @@ public class SPOPanel extends javax.swing.JPanel {
 					}
 				}
 			}
-			
+
 			// Add categories to filtered root (only if they have children)
 			if (teamSites.getChildCount() > 0) {
 				filteredRoot.add(teamSites);
@@ -115,14 +110,14 @@ public class SPOPanel extends javax.swing.JPanel {
 			if (otherSites.getChildCount() > 0) {
 				filteredRoot.add(otherSites);
 			}
-			
-			jTree1.setModel(new DefaultTreeModel(filteredRoot));
+
+			siteTree.setModel(new DefaultTreeModel(filteredRoot));
 		}
-		
+
 		// Expand all nodes
-		jTree1.expandRow(0);
-		for (int i = 1; i < jTree1.getRowCount(); i++) {
-			jTree1.expandRow(i);
+		siteTree.expandRow(0);
+		for (int i = 1; i < siteTree.getRowCount(); i++) {
+			siteTree.expandRow(i);
 		}
 	}
 
@@ -221,11 +216,11 @@ public class SPOPanel extends javax.swing.JPanel {
 					// Update the tree model on EDT
 					javax.swing.SwingUtilities.invokeLater(() -> {
 						originalRoot = root; // Store original root for filtering
-						jTree1.setModel(new DefaultTreeModel(root));
+						siteTree.setModel(new DefaultTreeModel(root));
 						// Expand root and first level
-						jTree1.expandRow(0);
-						for (int i = 1; i < jTree1.getRowCount(); i++) {
-							jTree1.expandRow(i);
+						siteTree.expandRow(0);
+						for (int i = 1; i < siteTree.getRowCount(); i++) {
+							siteTree.expandRow(i);
 						}
 					});
 
@@ -235,8 +230,8 @@ public class SPOPanel extends javax.swing.JPanel {
 					root.add(new DefaultMutableTreeNode("Error loading sites: " + ex.getMessage()));
 
 					javax.swing.SwingUtilities.invokeLater(() -> {
-						jTree1.setModel(new DefaultTreeModel(root));
-						jTree1.expandRow(0);
+						siteTree.setModel(new DefaultTreeModel(root));
+						siteTree.expandRow(0);
 					});
 				}
 				return null;
@@ -265,7 +260,7 @@ public class SPOPanel extends javax.swing.JPanel {
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        siteTree = new javax.swing.JTree();
         jPanel4 = new javax.swing.JPanel();
         filterTextField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
@@ -298,8 +293,13 @@ public class SPOPanel extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
-        jTree1.setModel(null);
-        jScrollPane1.setViewportView(jTree1);
+        siteTree.setModel(null);
+        siteTree.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                siteTreeMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(siteTree);
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -326,6 +326,19 @@ public class SPOPanel extends javax.swing.JPanel {
         add(jSplitPane1, "mainCard");
     }// </editor-fold>//GEN-END:initComponents
 
+    private void siteTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_siteTreeMouseClicked
+		if (evt.getClickCount() == 2) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) siteTree.getLastSelectedPathComponent();
+			if (selectedNode != null && selectedNode.getUserObject() instanceof SiteInfo) {
+				SiteInfo siteInfo = (SiteInfo) selectedNode.getUserObject();
+				String siteUrl = siteInfo.url;
+				System.out.println(siteUrl);
+				SPOSiteDetailPanel siteDetailPanel = new SPOSiteDetailPanel(siteUrl);
+				jSplitPane1.setRightComponent(siteDetailPanel);
+			}
+		}
+    }//GEN-LAST:event_siteTreeMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField filterTextField;
@@ -336,7 +349,7 @@ public class SPOPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JTree jTree1;
+    private javax.swing.JTree siteTree;
     // End of variables declaration//GEN-END:variables
 
 }
