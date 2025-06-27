@@ -9,6 +9,8 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.SwingWorker;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -23,6 +25,9 @@ import org.hkprog.m365gui.MyLib;
  */
 public class SPOPanel extends javax.swing.JPanel {
 
+	private List<SiteInfo> allSites = new ArrayList<>();
+	private DefaultMutableTreeNode originalRoot;
+
 	/**
 	 * Creates new form SPOPanel
 	 */
@@ -32,12 +37,93 @@ public class SPOPanel extends javax.swing.JPanel {
 		// Set up custom tree cell renderer
 		jTree1.setCellRenderer(new SPOTreeCellRenderer());
 
+		// Add filter functionality
+		setupFilterTextField();
+
 		// Show loading screen initially
 		java.awt.CardLayout cardLayout = (java.awt.CardLayout) getLayout();
 		cardLayout.show(this, "loadingCard");
 
 		// Load sites in background
 		loadSitesInBackground();
+	}
+
+	/**
+	 * Sets up the filter text field with document listener
+	 */
+	private void setupFilterTextField() {
+		filterTextField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				filterTree();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				filterTree();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				filterTree();
+			}
+		});
+	}
+
+	/**
+	 * Filters the tree based on the filter text field content
+	 */
+	private void filterTree() {
+		String filterText = filterTextField.getText().toLowerCase().trim();
+		
+		if (filterText.isEmpty()) {
+			// Show all sites if filter is empty
+			jTree1.setModel(new DefaultTreeModel(originalRoot));
+		} else {
+			// Create filtered tree
+			DefaultMutableTreeNode filteredRoot = new DefaultMutableTreeNode("SharePoint Online Sites");
+			
+			DefaultMutableTreeNode teamSites = new DefaultMutableTreeNode("Team Sites");
+			DefaultMutableTreeNode communicationSites = new DefaultMutableTreeNode("Communication Sites");
+			DefaultMutableTreeNode otherSites = new DefaultMutableTreeNode("Other Sites");
+			
+			// Filter sites based on title or URL
+			for (SiteInfo siteInfo : allSites) {
+				if (siteInfo.title.toLowerCase().contains(filterText) || 
+					siteInfo.url.toLowerCase().contains(filterText)) {
+					
+					DefaultMutableTreeNode siteNode = new DefaultMutableTreeNode(siteInfo);
+					
+					// Add to appropriate category
+					if (siteInfo.template.contains("SITEPAGEPUBLISHING")) {
+						communicationSites.add(siteNode);
+					} else if (siteInfo.template.contains("STS") || siteInfo.template.contains("GROUP")) {
+						teamSites.add(siteNode);
+					} else {
+						otherSites.add(siteNode);
+					}
+				}
+			}
+			
+			// Add categories to filtered root (only if they have children)
+			if (teamSites.getChildCount() > 0) {
+				filteredRoot.add(teamSites);
+			}
+			if (communicationSites.getChildCount() > 0) {
+				filteredRoot.add(communicationSites);
+			}
+			if (otherSites.getChildCount() > 0) {
+				filteredRoot.add(otherSites);
+			}
+			
+			jTree1.setModel(new DefaultTreeModel(filteredRoot));
+		}
+		
+		// Expand all nodes
+		jTree1.expandRow(0);
+		for (int i = 1; i < jTree1.getRowCount(); i++) {
+			jTree1.expandRow(i);
+		}
 	}
 
 	/**
@@ -59,7 +145,8 @@ public class SPOPanel extends javax.swing.JPanel {
 						// Parse JSON array
 						JSONArray sitesArray = new JSONArray(json);
 
-						// Create lists to collect and sort sites
+						// Clear previous sites and create lists to collect and sort sites
+						allSites.clear();
 						List<SiteInfo> teamSitesList = new ArrayList<>();
 						List<SiteInfo> communicationSitesList = new ArrayList<>();
 						List<SiteInfo> otherSitesList = new ArrayList<>();
@@ -75,6 +162,7 @@ public class SPOPanel extends javax.swing.JPanel {
 
 							// Create a site info object
 							SiteInfo siteInfo = new SiteInfo(title, url, template, "site");
+							allSites.add(siteInfo); // Store for filtering
 
 							// Categorize sites based on template
 							if (template.contains("SITEPAGEPUBLISHING")) {
@@ -132,6 +220,7 @@ public class SPOPanel extends javax.swing.JPanel {
 
 					// Update the tree model on EDT
 					javax.swing.SwingUtilities.invokeLater(() -> {
+						originalRoot = root; // Store original root for filtering
 						jTree1.setModel(new DefaultTreeModel(root));
 						// Expand root and first level
 						jTree1.expandRow(0);
@@ -177,6 +266,8 @@ public class SPOPanel extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
+        jPanel4 = new javax.swing.JPanel();
+        filterTextField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
 
         setLayout(new java.awt.CardLayout());
@@ -211,6 +302,11 @@ public class SPOPanel extends javax.swing.JPanel {
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
+        jPanel4.setLayout(new java.awt.BorderLayout());
+        jPanel4.add(filterTextField, java.awt.BorderLayout.CENTER);
+
+        jPanel1.add(jPanel4, java.awt.BorderLayout.PAGE_START);
+
         jSplitPane1.setLeftComponent(jPanel1);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -231,14 +327,32 @@ public class SPOPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField filterTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
 
+	/**
+	 * Helper class to store site information for sorting and filtering
+	 */
+	private static class SiteInfo {
+		final String title;
+		final String url;
+		final String template;
+		final String type;
+		
+		SiteInfo(String title, String url, String template, String type) {
+			this.title = title;
+			this.url = url;
+			this.template = template;
+			this.type = type;
+		}
+	}
 
 }

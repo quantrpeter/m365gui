@@ -1,5 +1,6 @@
 package org.hkprog.m365gui.spoPanel;
 
+import java.awt.Color;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
@@ -14,6 +15,7 @@ public class SPOTreeCellRenderer extends DefaultTreeCellRenderer {
 
 	private ImageIcon spoIcon;
 	private ImageIcon siteIcon;
+	Color selectedBackground=new Color(240,240,255);
 
 	public SPOTreeCellRenderer() {
 		java.net.URL iconUrl = getClass().getResource("/m365icon/sharepointOnline.png");
@@ -27,6 +29,13 @@ public class SPOTreeCellRenderer extends DefaultTreeCellRenderer {
 			boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+		if (sel) {
+			setBackgroundSelectionColor(selectedBackground);
+			setBackground(selectedBackground);
+			setTextSelectionColor(Color.BLACK);
+			setForeground(Color.BLACK);
+		}
 
 		if (value instanceof DefaultMutableTreeNode) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
