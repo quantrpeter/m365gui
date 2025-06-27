@@ -7,22 +7,29 @@ import javax.swing.table.AbstractTableModel;
 import java.util.*;
 
 public class TableModelList extends AbstractTableModel {
-    private final List<String> columnNames = new ArrayList<>();
+    private final List<String> columnNames;
     private final List<Map<String, Object>> data = new ArrayList<>();
 
+    // Default: all columns from JSON
     public TableModelList(JSONArray jsonArray) {
-        // Collect all unique keys from all objects
-        Set<String> keys = new LinkedHashSet<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject obj = jsonArray.getJSONObject(i);
-            Iterator<String> it = obj.keys();
-            while (it.hasNext()) {
-                keys.add(it.next());
-            }
-        }
-        columnNames.addAll(keys);
+        this(jsonArray, null);
+    }
 
-        // Store each row as a map
+    // Custom: only selected columns
+    public TableModelList(JSONArray jsonArray, List<String> selectedColumns) {
+        Set<String> keys = new LinkedHashSet<>();
+        if (selectedColumns == null) {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                Iterator<String> it = obj.keys();
+                while (it.hasNext()) {
+                    keys.add(it.next());
+                }
+            }
+            this.columnNames = new ArrayList<>(keys);
+        } else {
+            this.columnNames = new ArrayList<>(selectedColumns);
+        }
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
             Map<String, Object> row = new HashMap<>();

@@ -40,7 +40,11 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         listPanel = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
         refreshButton = new javax.swing.JButton();
+        autoWidthButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         filterTextField = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        filterColumnTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         listTable = new javax.swing.JTable();
 
@@ -61,6 +65,20 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         });
         jToolBar1.add(refreshButton);
 
+        autoWidthButton.setText("Auto Width");
+        autoWidthButton.setFocusable(false);
+        autoWidthButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        autoWidthButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        autoWidthButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoWidthButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(autoWidthButton);
+
+        jLabel2.setText("filter data");
+        jToolBar1.add(jLabel2);
+
         filterTextField.setMaximumSize(new java.awt.Dimension(200, 23));
         filterTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -68,6 +86,17 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
             }
         });
         jToolBar1.add(filterTextField);
+
+        jLabel1.setText("filter column");
+        jToolBar1.add(jLabel1);
+
+        filterColumnTextField.setMaximumSize(new java.awt.Dimension(200, 23));
+        filterColumnTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                filterColumnTextFieldKeyReleased(evt);
+            }
+        });
+        jToolBar1.add(filterColumnTextField);
 
         listPanel.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
@@ -143,7 +172,6 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		for (Map<String, Object> row : originalData) {
 			for (String key : columnNames) {
 				Object value = row.get(key);
-				System.out.println(value);
 				if (value != null && value.toString().toLowerCase().contains(filter)) {
 					filteredArr.put(new org.json.JSONObject(row));
 					break;
@@ -154,9 +182,56 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		CommonLib.autoResizeColumn(listTable);
     }//GEN-LAST:event_filterTextFieldKeyReleased
 
+    private void filterColumnTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterColumnTextFieldKeyReleased
+		String filter = filterColumnTextField.getText().toLowerCase().trim();
+		if (filter.isEmpty()) {
+			// Show all columns
+			org.json.JSONArray arr = new org.json.JSONArray();
+			for (Map<String, Object> row : originalData) {
+				arr.put(new org.json.JSONObject(row));
+			}
+			listTable.setModel(new TableModelList(arr));
+			CommonLib.autoResizeColumn(listTable);
+			return;
+		}
+		// Find columns whose name contains the filter
+		List<String> filteredColumns = new ArrayList<>();
+		for (String col : columnNames) {
+			if (col.toLowerCase().contains(filter)) {
+				filteredColumns.add(col);
+			}
+		}
+		// If no columns match, show nothing
+		if (filteredColumns.isEmpty()) {
+			listTable.setModel(new javax.swing.table.DefaultTableModel());
+			return;
+		}
+		// Build a new TableModelList with only the filtered columns
+		org.json.JSONArray arr = new org.json.JSONArray();
+		for (Map<String, Object> row : originalData) {
+			org.json.JSONObject obj = new org.json.JSONObject();
+			for (String col : filteredColumns) {
+				if (row.containsKey(col)) {
+					obj.put(col, row.get(col));
+				}
+			}
+			arr.put(obj);
+		}
+		listTable.setModel(new TableModelList(arr, filteredColumns));
+		CommonLib.autoResizeColumn(listTable);
+	}//GEN-LAST:event_filterColumnTextFieldKeyReleased
+
+    private void autoWidthButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoWidthButtonActionPerformed
+		CommonLib.autoResizeColumn(listTable);
+    }//GEN-LAST:event_autoWidthButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton autoWidthButton;
+    private javax.swing.JTextField filterColumnTextField;
     private javax.swing.JTextField filterTextField;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
