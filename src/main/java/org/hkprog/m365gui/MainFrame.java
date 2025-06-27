@@ -96,6 +96,8 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        m365guiLogoLabel = new hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel6 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -109,14 +111,20 @@ public class MainFrame extends javax.swing.JFrame {
         mainScrollPane = new javax.swing.JScrollPane();
         mainPanel = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        m365guiLogoLabel = new hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel();
         jToolBar1 = new javax.swing.JToolBar();
         settingButton = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         sPOPanel1 = new org.hkprog.m365gui.spoPanel.SPOPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        m365guiLogoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/m365gui.png"))); // NOI18N
+        m365guiLogoLabel.setPreferredSize(new java.awt.Dimension(50, 50));
+        jPanel1.add(m365guiLogoLabel);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jPanel6.setLayout(new java.awt.BorderLayout());
 
@@ -166,14 +174,6 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel6.add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         jPanel5.setLayout(new java.awt.BorderLayout());
-
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        m365guiLogoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/m365gui.png"))); // NOI18N
-        m365guiLogoLabel.setPreferredSize(new java.awt.Dimension(50, 50));
-        jPanel1.add(m365guiLogoLabel);
-
-        jPanel5.add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jToolBar1.setRollover(true);
 

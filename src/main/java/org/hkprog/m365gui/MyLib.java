@@ -38,8 +38,8 @@ public class MyLib {
 			}
 			// Wait for process to complete
 			int exitCode = process.waitFor();
-			logger.info("Exit Code: " + exitCode);
-			logger.info("Output:\n" + output.toString());
+//			logger.info("Exit Code: " + exitCode);
+//			logger.info("Output:\n" + output.toString());
 			if (errorOutput.length() > 0) {
 				System.err.println("Errors:\n" + errorOutput.toString());
 			}

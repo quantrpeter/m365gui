@@ -15,7 +15,7 @@ public class SPOTreeCellRenderer extends DefaultTreeCellRenderer {
 
 	private ImageIcon spoIcon;
 	private ImageIcon siteIcon;
-	Color selectedBackground=new Color(240,240,255);
+	Color selectedBackground = new Color(240, 240, 255);
 
 	public SPOTreeCellRenderer() {
 		java.net.URL iconUrl = getClass().getResource("/m365icon/sharepointOnline.png");
@@ -25,8 +25,7 @@ public class SPOTreeCellRenderer extends DefaultTreeCellRenderer {
 	}
 
 	@Override
-	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
-			boolean expanded, boolean leaf, int row, boolean hasFocus) {
+	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
@@ -40,7 +39,6 @@ public class SPOTreeCellRenderer extends DefaultTreeCellRenderer {
 		if (value instanceof DefaultMutableTreeNode) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 			Object userObject = node.getUserObject();
-
 			if (userObject instanceof SiteInfo) {
 				SiteInfo siteInfo = (SiteInfo) userObject;
 

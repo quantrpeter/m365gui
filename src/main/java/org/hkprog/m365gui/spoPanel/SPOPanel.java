@@ -298,6 +298,7 @@ public class SPOPanel extends javax.swing.JPanel {
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
+        jTree1.setModel(null);
         jScrollPane1.setViewportView(jTree1);
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -337,22 +338,5 @@ public class SPOPanel extends javax.swing.JPanel {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
-
-	/**
-	 * Helper class to store site information for sorting and filtering
-	 */
-	private static class SiteInfo {
-		final String title;
-		final String url;
-		final String template;
-		final String type;
-		
-		SiteInfo(String title, String url, String template, String type) {
-			this.title = title;
-			this.url = url;
-			this.template = template;
-			this.type = type;
-		}
-	}
 
 }
