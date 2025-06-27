@@ -71,15 +71,7 @@ public class SPOPanel extends javax.swing.JPanel {
 								}
 							}
 
-							DefaultMutableTreeNode siteNode = new DefaultMutableTreeNode(nodeText);
-
-							// Add site details as child nodes
-							if (!url.isEmpty()) {
-								siteNode.add(new DefaultMutableTreeNode("URL: " + url));
-							}
-							if (!template.isEmpty()) {
-								siteNode.add(new DefaultMutableTreeNode("Template: " + template));
-							}
+							DefaultMutableTreeNode siteNode = new DefaultMutableTreeNode(nodeText+": "+url);
 
 							// Categorize sites based on template
 							if (template.contains("SITEPAGEPUBLISHING")) {
@@ -165,16 +157,16 @@ public class SPOPanel extends javax.swing.JPanel {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(267, 267, 267)
+                .addGap(120, 120, 120)
                 .addComponent(jLabel1)
-                .addContainerGap(557, Short.MAX_VALUE))
+                .addContainerGap(704, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(465, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(92, 92, 92)
                 .addComponent(jLabel1)
-                .addGap(157, 157, 157))
+                .addContainerGap(530, Short.MAX_VALUE))
         );
 
         add(jPanel3, "loadingCard");

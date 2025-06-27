@@ -27,7 +27,6 @@ public class MainFrame extends javax.swing.JFrame {
 	 * Creates new form MainFrame
 	 */
 	public MainFrame() {
-		initComponents();
 		try {
 			QuantrSettingLibrary.load("m365gui", setting);
 		} catch (IOException ex) {
@@ -37,6 +36,7 @@ public class MainFrame extends javax.swing.JFrame {
 		} catch (IllegalAccessException ex) {
 			Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
 		}
+		initComponents();
 		// Load Microsoft 365 CLI commands from JSON file
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new TreeNodeData("Microsoft 365 CLI", null, null));
 		try {
