@@ -1,11 +1,12 @@
 package org.hkprog.m365gui.spoPanel;
 
 import hk.quantr.javalib.CommonLib;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import org.hkprog.m365gui.MainFrame;
 import org.hkprog.m365gui.MyLib;
 
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -264,9 +265,11 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		String serverRelativeUrl = jsonObject.getString("ServerRelativeUrl");
 		// open browser with the URL
 		String fullUrl = rootSiteUrl + serverRelativeUrl;
-		System.out.println("Opening URL: " + fullUrl);
+		fullUrl = fullUrl.replaceAll(" ", "%20");
+		//encode fullUrl
 		try {
-			java.awt.Desktop.getDesktop().browse(java.net.URI.create(fullUrl));
+			System.out.println("Opening URL: " + fullUrl);
+			java.awt.Desktop.getDesktop().browse(URI.create(fullUrl));
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Failed to open URL in browser: " + e.getMessage());
