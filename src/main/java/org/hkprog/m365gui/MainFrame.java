@@ -3,6 +3,8 @@ package org.hkprog.m365gui;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import hk.quantr.javalib.CommonLib;
 import hk.quantr.setting.library.QuantrSettingLibrary;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -12,8 +14,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.json.JSONObject;
 import org.json.JSONArray;
-import org.hkprog.m365gui.commandPanel.LoginPanel;
-import org.hkprog.m365gui.commandPanel.LogoutPanel;
+import org.hkprog.m365gui.commandPanel.CommandPanel;
 import org.hkprog.m365gui.commandPanel.ResultPanel;
 
 /**
@@ -39,7 +40,7 @@ public class MainFrame extends javax.swing.JFrame {
 			Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		// Load Microsoft 365 CLI commands from JSON file
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new TreeNodeData("Microsoft 365 CLI", null));
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new TreeNodeData("Microsoft 365 CLI", null, null));
 		try {
 			InputStream is = getClass().getResourceAsStream("/m365cli-commands.json");
 			if (is != null) {
@@ -50,19 +51,21 @@ public class MainFrame extends javax.swing.JFrame {
 					JSONObject obj = arr.getJSONObject(i);
 					String category = obj.getString("category");
 					String catIcon = obj.optString("icon", null);
+					String command = obj.optString("command", null);
 					JSONArray commands = obj.getJSONArray("commands");
-					DefaultMutableTreeNode catNode = new DefaultMutableTreeNode(new TreeNodeData(category, catIcon));
+					DefaultMutableTreeNode catNode = new DefaultMutableTreeNode(new TreeNodeData(category, catIcon, command));
 					for (int j = 0; j < commands.length(); j++) {
 						JSONObject cmdObj = commands.getJSONObject(j);
 						String cmdName = cmdObj.getString("name");
 						String cmdIcon = cmdObj.optString("icon", null);
-						catNode.add(new DefaultMutableTreeNode(new TreeNodeData(cmdName, cmdIcon)));
+						String cmdCommand = cmdObj.optString("command", null);
+						catNode.add(new DefaultMutableTreeNode(new TreeNodeData(cmdName, cmdIcon, cmdCommand)));
 					}
 					root.add(catNode);
 				}
 			}
 		} catch (Exception e) {
-			root.add(new DefaultMutableTreeNode(new TreeNodeData("Failed to load commands", null)));
+			root.add(new DefaultMutableTreeNode(new TreeNodeData("Failed to load commands", null, null)));
 		}
 		functionTree.setModel(new DefaultTreeModel(root));
 		functionTree.setCellRenderer(new javax.swing.tree.DefaultTreeCellRenderer() {
@@ -185,7 +188,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         getContentPane().add(jPanel5, java.awt.BorderLayout.NORTH);
 
-        setSize(new java.awt.Dimension(790, 604));
+        setSize(new java.awt.Dimension(1281, 987));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -197,41 +200,34 @@ public class MainFrame extends javax.swing.JFrame {
 		CommonLib.expandAll(functionTree, false);
     }//GEN-LAST:event_collapseAllButtonActionPerformed
 
-    private void addMessageComponent(java.awt.Component comp) {
-        javax.swing.JPanel wrapper = new javax.swing.JPanel();
+	private void addMessageComponent(java.awt.Component comp) {
+		javax.swing.JPanel wrapper = new javax.swing.JPanel();
 		wrapper.setOpaque(false);
-        wrapper.setLayout(new javax.swing.BoxLayout(wrapper, javax.swing.BoxLayout.X_AXIS));
-        wrapper.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 8, 8, 8)); // margin
-        wrapper.add(comp);
-        wrapper.setMaximumSize(wrapper.getPreferredSize()); // Prevent vertical stretching
-        mainPanel.add(wrapper);
-        mainPanel.revalidate();
-        mainPanel.repaint();
-    }
+		wrapper.setLayout(new javax.swing.BoxLayout(wrapper, javax.swing.BoxLayout.X_AXIS));
+		wrapper.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 8, 8, 8)); // margin
+		wrapper.add(comp);
+		wrapper.setMaximumSize(wrapper.getPreferredSize()); // Prevent vertical stretching
+		mainPanel.add(wrapper);
+		mainPanel.revalidate();
+		mainPanel.repaint();
+	}
 
     private void functionTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_functionTreeMouseClicked
-        if (evt.getClickCount() == 2) {
-            javax.swing.tree.TreePath path = functionTree.getPathForLocation(evt.getX(), evt.getY());
-            if (path != null) {
-                Object nodeObj = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
-                if (nodeObj instanceof TreeNodeData) {
-                    TreeNodeData data = (TreeNodeData) nodeObj;
-                    if ("login".equalsIgnoreCase(data.name)) {
-                        addMessageComponent(new LoginPanel(""));
-                    }else if ("logout".equalsIgnoreCase(data.name)) {
-                        addMessageComponent(new LogoutPanel());
-                    }else if ("info".equalsIgnoreCase(data.name)) {
-                                                LoginPanel panel = new LoginPanel("tenant info get");
-                                                addMessageComponent(panel);
-                                                String result = panel.execute();
-                                                ResultPanel resultPanel = new ResultPanel();
-                                                resultPanel.jTextArea1.setText(result);
-                                                addMessageComponent(resultPanel);
-                                        }
-                }
-            }
-        }
-
+		if (evt.getClickCount() == 2) {
+			javax.swing.tree.TreePath path = functionTree.getPathForLocation(evt.getX(), evt.getY());
+			if (path != null) {
+				Object nodeObj = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
+				if (nodeObj instanceof TreeNodeData) {
+					TreeNodeData data = (TreeNodeData) nodeObj;
+					CommandPanel panel = new CommandPanel(setting.m365Path + " " + data.command);
+					addMessageComponent(panel);
+					String result = panel.execute();
+					ResultPanel resultPanel = new ResultPanel();
+					resultPanel.jTextArea1.setText(result);
+					addMessageComponent(resultPanel);
+				}
+			}
+		}
     }//GEN-LAST:event_functionTreeMouseClicked
 
     private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingButtonActionPerformed

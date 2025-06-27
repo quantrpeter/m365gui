@@ -1,47 +1,17 @@
 [
   { "category": "Basic", "icon": "famfamfam/application.png", "commands": [
-      { "name": "login", "icon": "famfamfam/key.png" },
-      { "name": "logout", "icon": "famfamfam/door_out.png" },
-      { "name": "help", "icon": "famfamfam/help.png" },
-      { "name": "version", "icon": "famfamfam/information.png" }
+      { "name": "login", "icon": "famfamfam/key.png", "command":"login" },
+      { "name": "logout", "icon": "famfamfam/door_out.png", "command": "logout" },
+      { "name": "help", "icon": "famfamfam/help.png", "command": "help" },
+      { "name": "version", "icon": "famfamfam/information.png", "command": "version" }
     ]
   },
   { "category": "Tenant", "icon": "famfamfam/bullet_star.png", "commands": [
-      { "name": "info", "icon": "famfamfam/bullet_pink.png" }
+      { "name": "info", "icon": "famfamfam/bullet_pink.png", "command": "tenant info get" }
     ]
   },
-  { "category": "User", "icon": "famfamfam/user.png", "commands": [
-      { "name": "user list", "icon": "famfamfam/user.png" },
-      { "name": "user get", "icon": "famfamfam/user_go.png" },
-      { "name": "user add", "icon": "famfamfam/user_add.png" },
-      { "name": "user remove", "icon": "famfamfam/user_delete.png" }
-    ]
-  },
-  { "category": "Group", "icon": "famfamfam/group.png", "commands": [
-      { "name": "group list", "icon": "famfamfam/group.png" },
-      { "name": "group get", "icon": "famfamfam/group_go.png" },
-      { "name": "group add", "icon": "famfamfam/group_add.png" },
-      { "name": "group remove", "icon": "famfamfam/group_delete.png" }
-    ]
-  },
-  { "category": "Site", "icon": "famfamfam/house.png", "commands": [
-      { "name": "site list", "icon": "famfamfam/house.png" },
-      { "name": "site get", "icon": "famfamfam/house_go.png" },
-      { "name": "site add", "icon": "famfamfam/house_go.png" },
-      { "name": "site remove", "icon": "famfamfam/house.png" }
-    ]
-  },
-  { "category": "Team", "icon": "famfamfam/group.png", "commands": [
-      { "name": "team list", "icon": "famfamfam/group.png" },
-      { "name": "team get", "icon": "famfamfam/group_go.png" },
-      { "name": "team add", "icon": "famfamfam/group_add.png" },
-      { "name": "team remove", "icon": "famfamfam/group_delete.png" }
-    ]
-  },
-  { "category": "Mail", "icon": "famfamfam/email.png", "commands": [
-      { "name": "mail send", "icon": "famfamfam/email_go.png" },
-      { "name": "mail list", "icon": "famfamfam/email.png" },
-      { "name": "mail get", "icon": "famfamfam/email_open.png" }
+  { "category": "SharePoint", "icon": "famfamfam/box.png", "commands": [
+      { "name": "site list", "icon": "famfamfam/box.png", "command": "spo site list" }
     ]
   }
 ]

@@ -8,10 +8,12 @@ public class TreeNodeData {
 
 	String name;
 	String iconPath;
+	String command;
 
-	TreeNodeData(String name, String iconPath) {
+	TreeNodeData(String name, String iconPath, String command) {
 		this.name = name;
 		this.iconPath = iconPath;
+		this.command = command;
 	}
 
 	public String toString() {
