@@ -22,6 +22,7 @@ public class SPOPanel extends javax.swing.JPanel {
 
 	private List<SiteInfo> allSites = new ArrayList<>();
 	private DefaultMutableTreeNode originalRoot;
+	String rootSiteUrl;
 
 	/**
 	 * Creates new form SPOPanel
@@ -131,7 +132,12 @@ public class SPOPanel extends javax.swing.JPanel {
 
 				try {
 					// Get the JSON data from M365 CLI
-					String json = MyLib.run(MainFrame.setting.m365Path + " spo site list --output json");
+					String json = MyLib.run(MainFrame.setting.m365Path + " spo tenant settings list --output json");
+					JSONObject tenantSettings = new JSONObject(json);
+					rootSiteUrl = tenantSettings.optString("RootSiteUrl", "");
+
+					// Get the JSON data from M365 CLI
+					json = MyLib.run(MainFrame.setting.m365Path + " spo site list --output json");
 
 					// Create root node for the tree
 					DefaultMutableTreeNode root = new DefaultMutableTreeNode("SharePoint Online Sites");
@@ -333,7 +339,7 @@ public class SPOPanel extends javax.swing.JPanel {
 				SiteInfo siteInfo = (SiteInfo) selectedNode.getUserObject();
 				String siteUrl = siteInfo.url;
 				System.out.println(siteUrl);
-				SPOSiteDetailPanel siteDetailPanel = new SPOSiteDetailPanel(siteUrl);
+				SPOSiteDetailPanel siteDetailPanel = new SPOSiteDetailPanel(rootSiteUrl, siteUrl);
 				jSplitPane1.setRightComponent(siteDetailPanel);
 			}
 		}

@@ -19,11 +19,13 @@ import java.util.Map;
 public class SPOSiteDetailPanel extends javax.swing.JPanel {
 
 	String webUrl;
+	String rootSiteUrl;
 
 	/**
 	 * Creates new form SPOSiteDetailPanel
 	 */
-	public SPOSiteDetailPanel(String webUrl) {
+	public SPOSiteDetailPanel(String rootSiteUrl, String webUrl) {
+		this.rootSiteUrl = rootSiteUrl;
 		this.webUrl = webUrl;
 		initComponents();
 	}
@@ -45,6 +47,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         filterTextField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         filterColumnTextField = new javax.swing.JTextField();
+        browseButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listTable = new javax.swing.JTable();
 
@@ -98,6 +101,17 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         });
         jToolBar1.add(filterColumnTextField);
 
+        browseButton.setText("Browse");
+        browseButton.setFocusable(false);
+        browseButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        browseButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        browseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(browseButton);
+
         listPanel.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         listTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -123,11 +137,12 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
 		String json = MyLib.run(MainFrame.setting.m365Path + " spo list list --webUrl " + webUrl + " --output json");
+		System.out.println(MainFrame.setting.m365Path + " spo list list --webUrl " + webUrl + " --output json");
 		try {
 			org.json.JSONArray arr = new org.json.JSONArray(json);
 			TableModelList model = new TableModelList(arr);
 			listTable.setModel(model);
-			CommonLib.autoResizeColumn(listTable);
+			CommonLib.autoResizeColumnWithHeader(listTable);
 			// Store original data and columns for filtering
 			originalData.clear();
 			columnNames.clear();
@@ -165,7 +180,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				arr.put(new org.json.JSONObject(row));
 			}
 			listTable.setModel(new TableModelList(arr));
-			CommonLib.autoResizeColumn(listTable);
+			CommonLib.autoResizeColumnWithHeader(listTable);
 			return;
 		}
 		org.json.JSONArray filteredArr = new org.json.JSONArray();
@@ -179,7 +194,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			}
 		}
 		listTable.setModel(new TableModelList(filteredArr));
-		CommonLib.autoResizeColumn(listTable);
+		CommonLib.autoResizeColumnWithHeader(listTable);
     }//GEN-LAST:event_filterTextFieldKeyReleased
 
     private void filterColumnTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterColumnTextFieldKeyReleased
@@ -191,7 +206,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				arr.put(new org.json.JSONObject(row));
 			}
 			listTable.setModel(new TableModelList(arr));
-			CommonLib.autoResizeColumn(listTable);
+			CommonLib.autoResizeColumnWithHeader(listTable);
 			return;
 		}
 		// Find columns whose name contains the filter
@@ -218,16 +233,50 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			arr.put(obj);
 		}
 		listTable.setModel(new TableModelList(arr, filteredColumns));
-		CommonLib.autoResizeColumn(listTable);
+		CommonLib.autoResizeColumnWithHeader(listTable);
 	}//GEN-LAST:event_filterColumnTextFieldKeyReleased
 
     private void autoWidthButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoWidthButtonActionPerformed
-		CommonLib.autoResizeColumn(listTable);
+		CommonLib.autoResizeColumnWithHeader(listTable);
     }//GEN-LAST:event_autoWidthButtonActionPerformed
+
+    private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
+		// get column "RootFolder"
+		int columnIndex = listTable.getColumnModel().getColumnIndex("RootFolder");
+		if (columnIndex < 0) {
+			System.out.println("Column 'RootFolder' not found");
+			return;
+		}
+		// Get the selected row
+		int selectedRow = listTable.getSelectedRow();
+		if (selectedRow < 0) {
+			System.out.println("No row selected");
+			return;
+		}
+		// Get the value of the "RootFolder" column
+		Object value = listTable.getValueAt(selectedRow, columnIndex);
+		if (value == null) {
+			System.out.println("No value found in 'RootFolder' column");
+			return;
+		}
+		String rootFolderUrl = value.toString();
+		org.json.JSONObject jsonObject = new org.json.JSONObject(rootFolderUrl);
+		String serverRelativeUrl = jsonObject.getString("ServerRelativeUrl");
+		// open browser with the URL
+		String fullUrl = rootSiteUrl + serverRelativeUrl;
+		System.out.println("Opening URL: " + fullUrl);
+		try {
+			java.awt.Desktop.getDesktop().browse(java.net.URI.create(fullUrl));
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Failed to open URL in browser: " + e.getMessage());
+		}
+    }//GEN-LAST:event_browseButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton autoWidthButton;
+    private javax.swing.JButton browseButton;
     private javax.swing.JTextField filterColumnTextField;
     private javax.swing.JTextField filterTextField;
     private javax.swing.JLabel jLabel1;
