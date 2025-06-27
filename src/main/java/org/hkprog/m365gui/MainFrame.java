@@ -3,8 +3,6 @@ package org.hkprog.m365gui;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import hk.quantr.javalib.CommonLib;
 import hk.quantr.setting.library.QuantrSettingLibrary;
-import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -98,6 +96,8 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel6 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -113,8 +113,12 @@ public class MainFrame extends javax.swing.JFrame {
         m365guiLogoLabel = new hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel();
         jToolBar1 = new javax.swing.JToolBar();
         settingButton = new javax.swing.JButton();
+        jPanel7 = new javax.swing.JPanel();
+        sPOPanel1 = new org.hkprog.m365gui.spoPanel.SPOPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel6.setLayout(new java.awt.BorderLayout());
 
         jSplitPane1.setDividerLocation(300);
 
@@ -159,7 +163,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jSplitPane1.setRightComponent(jPanel3);
 
-        getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
+        jPanel6.add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         jPanel5.setLayout(new java.awt.BorderLayout());
 
@@ -186,7 +190,16 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel5.add(jToolBar1, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(jPanel5, java.awt.BorderLayout.NORTH);
+        jPanel6.add(jPanel5, java.awt.BorderLayout.NORTH);
+
+        jTabbedPane1.addTab("Basic", jPanel6);
+
+        jPanel7.setLayout(new java.awt.BorderLayout());
+        jPanel7.add(sPOPanel1, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("tab2", jPanel7);
+
+        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         setSize(new java.awt.Dimension(1281, 987));
         setLocationRelativeTo(null);
@@ -277,12 +290,16 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
     private hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel m365guiLogoLabel;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JScrollPane mainScrollPane;
+    private org.hkprog.m365gui.spoPanel.SPOPanel sPOPanel1;
     private javax.swing.JButton settingButton;
     // End of variables declaration//GEN-END:variables
 }
