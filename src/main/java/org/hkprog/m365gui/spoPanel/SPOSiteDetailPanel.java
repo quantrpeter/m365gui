@@ -689,16 +689,77 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		Object parent = mxGraph.getDefaultParent();
 		mxGraph.getModel().beginUpdate();
 		try {
-			Object v1 = mxGraph.insertVertex(parent, null, "A", 100, 100, 60, 40);
-			Object v2 = mxGraph.insertVertex(parent, null, "B", 300, 100, 60, 40);
-			Object v3 = mxGraph.insertVertex(parent, null, "C", 200, 200, 60, 40);
-			mxGraph.insertEdge(parent, null, "Edge1", v1, v2);
-			mxGraph.insertEdge(parent, null, "Edge2", v2, v3);
-			mxGraph.insertEdge(parent, null, "Edge3", v3, v1);
+			Object site = mxGraph.insertVertex(parent, null, siteTitle, 100, 100, 60, 40);
+			// spo group list --webUrl
+			String command = MainFrame.setting.m365Path + " spo group list --webUrl " + webUrl + " --output json";
+			System.out.println(command);
+			String json = MyLib.run(command);
+			org.json.JSONArray arr = new org.json.JSONArray(json);
+			Map<String, Object> groupVertices = new HashMap<>();
+			for (int i = 0; i < arr.length(); i++) {
+				org.json.JSONObject group = arr.getJSONObject(i);
+				String groupName = group.optString("Title", "Group " + (i + 1));
+				Object groupVertex = mxGraph.insertVertex(parent, null, groupName,
+						Math.random() * 400, Math.random() * 400, 80, 30);
+				groupVertices.put(groupName, groupVertex);
+				mxGraph.insertEdge(parent, null, "Group", site, groupVertex);
+			}
+			// spo web get --url
+			command = MainFrame.setting.m365Path + " spo web get --url " + webUrl + " --output json";
+			System.out.println(command);
+			json = MyLib.run(command);
+			org.json.JSONObject webObj = new org.json.JSONObject(json);
+			String webTitle = webObj.optString("Title", "Web");
+			Object webVertex = mxGraph.insertVertex(parent, null, webTitle,
+					Math.random() * 400, Math.random() * 400, 80, 30);
+			mxGraph.insertEdge(parent, null, "Web", site, webVertex);
+			// Add permissions
+			org.json.JSONArray permissions = webObj.optJSONArray("EffectiveBasePermissions");
+			if (permissions != null) {
+				for (int i = 0; i < permissions.length(); i++) {
+					org.json.JSONObject perm = permissions.getJSONObject(i);
+					String permName = perm.optString("Name", "Permission " + (i +	 1));
+					Object permVertex = mxGraph.insertVertex(parent, null, permName,
+							Math.random() * 400, Math.random() * 400, 80, 30);
+					mxGraph.insertEdge(parent, null, "Permission", webVertex, permVertex);
+					// Connect permissions to groups
+					for (String groupName : groupVertices.keySet()) {
+						Object groupVertex = groupVertices.get(groupName);
+						if (Math.random() < 0.5) { // Randomly connect some groups
+							mxGraph.insertEdge(parent, null, "Has Permission", groupVertex, permVertex);
+						}
+					}
+				}
+			} else {
+				System.out.println("No EffectiveBasePermissions found in web object.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error generating permission graph: " + e.getMessage());
+			javax.swing.JOptionPane.showMessageDialog(this, "Error generating permission graph: " + e.getMessage(),
+					"Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+			return;
+		} catch (OutOfMemoryError e) {
+			e.printStackTrace();
+			System.out.println("Out of memory error generating permission graph: " + e.getMessage());
+			javax.swing.JOptionPane.showMessageDialog(this, "Out of memory error generating permission graph: " + e.getMessage(),
+					"Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+			return;
 		} finally {
 			mxGraph.getModel().endUpdate();
 		}
-		com.mxgraph.swing.mxGraphComponent graphComponent = new com.mxgraph.swing.mxGraphComponent(mxGraph);
+		com.mxgraph.swing.mxGraphComponent graphComponent = new com.mxgraph.swing.mxGraphComponent(mxGraph) {
+			@Override
+			public boolean isEditEvent(java.awt.event.MouseEvent e) {
+				return false;
+			}
+		};
+		graphComponent.setConnectable(false);
+		graphComponent.getGraph().setAllowDanglingEdges(false);
+		graphComponent.getGraph().setCellsDisconnectable(false);
+		graphComponent.getGraph().setCellsEditable(false);
+		graphComponent.getGraph().setCellsMovable(true);
+		graphComponent.getGraph().setCellsResizable(false);
 		jGraphTPanel.setLayout(new java.awt.BorderLayout());
 		jGraphTPanel.add(graphComponent, java.awt.BorderLayout.CENTER);
 		jGraphTPanel.revalidate();

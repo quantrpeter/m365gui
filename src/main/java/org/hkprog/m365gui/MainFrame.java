@@ -121,7 +121,8 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         m365guiLogoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/m365gui.png"))); // NOI18N
-        m365guiLogoLabel.setPreferredSize(new java.awt.Dimension(50, 50));
+        m365guiLogoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        m365guiLogoLabel.setPreferredSize(new java.awt.Dimension(145, 50));
         jPanel1.add(m365guiLogoLabel);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
