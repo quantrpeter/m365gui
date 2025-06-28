@@ -100,6 +100,10 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         filterGroupTextField = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         groupTable = new javax.swing.JTable();
+        permissionGraphPanel = new javax.swing.JPanel();
+        jToolBar4 = new javax.swing.JToolBar();
+        refreshPermissionGraphButton = new javax.swing.JButton();
+        jGraphTPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -304,6 +308,28 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         groupPanel.add(jScrollPane3, java.awt.BorderLayout.CENTER);
 
         jTabbedPane1.addTab("Group", groupPanel);
+
+        permissionGraphPanel.setLayout(new java.awt.BorderLayout());
+
+        jToolBar4.setRollover(true);
+
+        refreshPermissionGraphButton.setText("Refresh");
+        refreshPermissionGraphButton.setFocusable(false);
+        refreshPermissionGraphButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        refreshPermissionGraphButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        refreshPermissionGraphButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshPermissionGraphButtonActionPerformed(evt);
+            }
+        });
+        jToolBar4.add(refreshPermissionGraphButton);
+
+        permissionGraphPanel.add(jToolBar4, java.awt.BorderLayout.PAGE_START);
+
+        jGraphTPanel.setLayout(new java.awt.BorderLayout());
+        permissionGraphPanel.add(jGraphTPanel, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Permission Graph", permissionGraphPanel);
 
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -528,131 +554,156 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_viewButtonActionPerformed
 
     private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
-        // TODO add your handling code here:
+		// TODO add your handling code here:
     }//GEN-LAST:event_copyButtonActionPerformed
 
     private void refreshPermissionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshPermissionButtonActionPerformed
-        String command = MainFrame.setting.m365Path + " spo web get --url " + webUrl + " --output json";
-        System.out.println(command);
-        String json = MyLib.run(command);
+		String command = MainFrame.setting.m365Path + " spo web get --url " + webUrl + " --output json";
+		System.out.println(command);
+		String json = MyLib.run(command);
 		org.json.JSONObject obj = new org.json.JSONObject(json);
 		// Build a 2-column table: key, value
 		java.util.List<String> keys = new java.util.ArrayList<>(obj.keySet());
 		Object[][] data = new Object[keys.size()][2];
 		permissionTableOriginalData.clear();
 		for (int i = 0; i < keys.size(); i++) {
-            String key = keys.get(i);
-            Object value = obj.get(key);
-            Object[] row = new Object[] { key, (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value };
-            data[i][0] = row[0];
-            data[i][1] = row[1];
-            permissionTableOriginalData.add(row);
-        }
-        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
-        permissionTable.setModel(model);
-        CommonLib.autoResizeColumnWithHeader(permissionTable);
+			String key = keys.get(i);
+			Object value = obj.get(key);
+			Object[] row = new Object[]{key, (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value};
+			data[i][0] = row[0];
+			data[i][1] = row[1];
+			permissionTableOriginalData.add(row);
+		}
+		javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
+		permissionTable.setModel(model);
+		CommonLib.autoResizeColumnWithHeader(permissionTable);
     }//GEN-LAST:event_refreshPermissionButtonActionPerformed
 
     private void filterPermissionTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterPermissionTextFieldKeyReleased
-        String filter = filterPermissionTextField.getText().toLowerCase().trim();
-        if (filter.isEmpty()) {
-            // Show all
-            Object[][] data = new Object[permissionTableOriginalData.size()][2];
-            for (int i = 0; i < permissionTableOriginalData.size(); i++) {
-                data[i][0] = permissionTableOriginalData.get(i)[0];
-                data[i][1] = permissionTableOriginalData.get(i)[1];
-            }
-            javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
-            permissionTable.setModel(model);
-            CommonLib.autoResizeColumnWithHeader(permissionTable);
-            return;
-        }
-        java.util.List<Object[]> filtered = new java.util.ArrayList<>();
-        for (Object[] row : permissionTableOriginalData) {
-            if (row[0].toString().toLowerCase().contains(filter) || (row[1] != null && row[1].toString().toLowerCase().contains(filter))) {
-                filtered.add(row);
-            }
-        }
-        Object[][] data = new Object[filtered.size()][2];
-        for (int i = 0; i < filtered.size(); i++) {
-            data[i][0] = filtered.get(i)[0];
-            data[i][1] = filtered.get(i)[1];
-        }
-        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
-        permissionTable.setModel(model);
-        CommonLib.autoResizeColumnWithHeader(permissionTable);
+		String filter = filterPermissionTextField.getText().toLowerCase().trim();
+		if (filter.isEmpty()) {
+			// Show all
+			Object[][] data = new Object[permissionTableOriginalData.size()][2];
+			for (int i = 0; i < permissionTableOriginalData.size(); i++) {
+				data[i][0] = permissionTableOriginalData.get(i)[0];
+				data[i][1] = permissionTableOriginalData.get(i)[1];
+			}
+			javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
+			permissionTable.setModel(model);
+			CommonLib.autoResizeColumnWithHeader(permissionTable);
+			return;
+		}
+		java.util.List<Object[]> filtered = new java.util.ArrayList<>();
+		for (Object[] row : permissionTableOriginalData) {
+			if (row[0].toString().toLowerCase().contains(filter) || (row[1] != null && row[1].toString().toLowerCase().contains(filter))) {
+				filtered.add(row);
+			}
+		}
+		Object[][] data = new Object[filtered.size()][2];
+		for (int i = 0; i < filtered.size(); i++) {
+			data[i][0] = filtered.get(i)[0];
+			data[i][1] = filtered.get(i)[1];
+		}
+		javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
+		permissionTable.setModel(model);
+		CommonLib.autoResizeColumnWithHeader(permissionTable);
     }//GEN-LAST:event_filterPermissionTextFieldKeyReleased
 
     private void refreshGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshGroupButtonActionPerformed
-        String command = MainFrame.setting.m365Path + " spo group list --webUrl " + webUrl + " --output json";
-        System.out.println(command);
-        String json = MyLib.run(command);
-        try {
-            org.json.JSONArray arr = new org.json.JSONArray(json);
-            groupTableOriginalData.clear();
-            String[] columns;
-            if (arr.length() > 0) {
-                org.json.JSONObject first = arr.getJSONObject(0);
-                java.util.List<String> colList = new java.util.ArrayList<>(first.keySet());
-                columns = colList.toArray(new String[0]);
-            } else {
-                columns = new String[]{};
-            }
-            Object[][] data = new Object[arr.length()][columns.length];
-            for (int i = 0; i < arr.length(); i++) {
-                org.json.JSONObject obj = arr.getJSONObject(i);
-                groupTableOriginalData.add(obj);
-                for (int j = 0; j < columns.length; j++) {
-                    Object value = obj.opt(columns[j]);
-                    data[i][j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
-                }
-            }
-            javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, columns);
-            groupTable.setModel(model);
-            CommonLib.autoResizeColumnWithHeader(groupTable);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+		String command = MainFrame.setting.m365Path + " spo group list --webUrl " + webUrl + " --output json";
+		System.out.println(command);
+		String json = MyLib.run(command);
+		try {
+			org.json.JSONArray arr = new org.json.JSONArray(json);
+			groupTableOriginalData.clear();
+			String[] columns;
+			if (arr.length() > 0) {
+				org.json.JSONObject first = arr.getJSONObject(0);
+				java.util.List<String> colList = new java.util.ArrayList<>(first.keySet());
+				columns = colList.toArray(new String[0]);
+			} else {
+				columns = new String[]{};
+			}
+			Object[][] data = new Object[arr.length()][columns.length];
+			for (int i = 0; i < arr.length(); i++) {
+				org.json.JSONObject obj = arr.getJSONObject(i);
+				groupTableOriginalData.add(obj);
+				for (int j = 0; j < columns.length; j++) {
+					Object value = obj.opt(columns[j]);
+					data[i][j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
+				}
+			}
+			javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, columns);
+			groupTable.setModel(model);
+			CommonLib.autoResizeColumnWithHeader(groupTable);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
     }//GEN-LAST:event_refreshGroupButtonActionPerformed
 
     private void filterGroupTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterGroupTextFieldKeyReleased
-        String filter = filterGroupTextField.getText().trim().toLowerCase();
-        if (groupTableOriginalData.isEmpty()) return;
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) groupTable.getModel();
-        if (filter.isEmpty()) {
-            // Restore all rows
-            model.setRowCount(0);
-            for (org.json.JSONObject obj : groupTableOriginalData) {
-                Object[] row = new Object[model.getColumnCount()];
-                for (int j = 0; j < model.getColumnCount(); j++) {
-                    Object value = obj.opt(model.getColumnName(j));
-                    row[j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
-                }
-                model.addRow(row);
-            }
-        } else {
-            model.setRowCount(0);
-            for (org.json.JSONObject obj : groupTableOriginalData) {
-                boolean match = false;
-                for (String key : obj.keySet()) {
-                    Object value = obj.opt(key);
-                    if (value != null && value.toString().toLowerCase().contains(filter)) {
-                        match = true;
-                        break;
-                    }
-                }
-                if (match) {
-                    Object[] row = new Object[model.getColumnCount()];
-                    for (int j = 0; j < model.getColumnCount(); j++) {
-                        Object value = obj.opt(model.getColumnName(j));
-                        row[j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
-                    }
-                    model.addRow(row);
-                }
-            }
-        }
-        CommonLib.autoResizeColumnWithHeader(groupTable);
+		String filter = filterGroupTextField.getText().trim().toLowerCase();
+		if (groupTableOriginalData.isEmpty()) {
+			return;
+		}
+		javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) groupTable.getModel();
+		if (filter.isEmpty()) {
+			// Restore all rows
+			model.setRowCount(0);
+			for (org.json.JSONObject obj : groupTableOriginalData) {
+				Object[] row = new Object[model.getColumnCount()];
+				for (int j = 0; j < model.getColumnCount(); j++) {
+					Object value = obj.opt(model.getColumnName(j));
+					row[j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
+				}
+				model.addRow(row);
+			}
+		} else {
+			model.setRowCount(0);
+			for (org.json.JSONObject obj : groupTableOriginalData) {
+				boolean match = false;
+				for (String key : obj.keySet()) {
+					Object value = obj.opt(key);
+					if (value != null && value.toString().toLowerCase().contains(filter)) {
+						match = true;
+						break;
+					}
+				}
+				if (match) {
+					Object[] row = new Object[model.getColumnCount()];
+					for (int j = 0; j < model.getColumnCount(); j++) {
+						Object value = obj.opt(model.getColumnName(j));
+						row[j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
+					}
+					model.addRow(row);
+				}
+			}
+		}
+		CommonLib.autoResizeColumnWithHeader(groupTable);
     }//GEN-LAST:event_filterGroupTextFieldKeyReleased
+
+    private void refreshPermissionGraphButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshPermissionGraphButtonActionPerformed
+		// Sample graph using JGraphX
+		jGraphTPanel.removeAll();
+		com.mxgraph.view.mxGraph mxGraph = new com.mxgraph.view.mxGraph();
+		Object parent = mxGraph.getDefaultParent();
+		mxGraph.getModel().beginUpdate();
+		try {
+			Object v1 = mxGraph.insertVertex(parent, null, "A", 100, 100, 60, 40);
+			Object v2 = mxGraph.insertVertex(parent, null, "B", 300, 100, 60, 40);
+			Object v3 = mxGraph.insertVertex(parent, null, "C", 200, 200, 60, 40);
+			mxGraph.insertEdge(parent, null, "Edge1", v1, v2);
+			mxGraph.insertEdge(parent, null, "Edge2", v2, v3);
+			mxGraph.insertEdge(parent, null, "Edge3", v3, v1);
+		} finally {
+			mxGraph.getModel().endUpdate();
+		}
+		com.mxgraph.swing.mxGraphComponent graphComponent = new com.mxgraph.swing.mxGraphComponent(mxGraph);
+		jGraphTPanel.setLayout(new java.awt.BorderLayout());
+		jGraphTPanel.add(graphComponent, java.awt.BorderLayout.CENTER);
+		jGraphTPanel.revalidate();
+		jGraphTPanel.repaint();
+	}//GEN-LAST:event_refreshPermissionGraphButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -666,6 +717,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     private javax.swing.JPanel groupPanel;
     private javax.swing.JTable groupTable;
     private javax.swing.JButton itemButton;
+    private javax.swing.JPanel jGraphTPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -675,13 +727,16 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JToolBar jToolBar3;
+    private javax.swing.JToolBar jToolBar4;
     private javax.swing.JPanel listPanel;
     private javax.swing.JTable listTable;
+    private javax.swing.JPanel permissionGraphPanel;
     private javax.swing.JPanel permissionPanel;
     private javax.swing.JTable permissionTable;
     private javax.swing.JButton refreshButton;
     private javax.swing.JButton refreshGroupButton;
     private javax.swing.JButton refreshPermissionButton;
+    private javax.swing.JButton refreshPermissionGraphButton;
     private javax.swing.JButton viewButton;
     // End of variables declaration//GEN-END:variables
 

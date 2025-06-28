@@ -92,5 +92,10 @@
 			<version>1.0</version>
 			<type>jar</type>
 		</dependency>
+		<dependency>
+			<groupId>com.github.vlsi.mxgraph</groupId>
+			<artifactId>jgraphx</artifactId>
+			<version>4.2.2</version>
+		</dependency>
 	</dependencies>
 </project>
