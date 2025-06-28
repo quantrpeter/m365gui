@@ -19,7 +19,7 @@ public class MyLib {
 		try {
 			Setting setting = new Setting();
 			QuantrSettingLibrary.load("m365gui", setting);
-			ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "));
+			ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+(?=(?:(?:[^\"]*\"){2})*[^\"]*$)"));
 			processBuilder.environment().put("PATH", new File(setting.m365Path).getParent());
 			Process process = processBuilder.start();
 			// Capture output

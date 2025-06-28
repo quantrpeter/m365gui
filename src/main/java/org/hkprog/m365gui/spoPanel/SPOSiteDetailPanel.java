@@ -16,7 +16,7 @@ import java.util.Map;
  * @author Peter <peter@quantr.hk>
  */
 public class SPOSiteDetailPanel extends javax.swing.JPanel {
-	
+
 	String webUrl;
 	String rootSiteUrl;
 
@@ -27,24 +27,24 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 
 		listTable.setDefaultRenderer(Object.class, new MyTableCellRenderer());
 
-        // Add key binding for copy cell value (Cmd+C on Mac, Ctrl+C on Windows/Linux)
-        String copyKey = System.getProperty("os.name").toLowerCase().contains("mac") ? "meta C" : "ctrl C";
-        listTable.getInputMap().put(javax.swing.KeyStroke.getKeyStroke(copyKey), "copyCell");
-        listTable.getActionMap().put("copyCell", new javax.swing.AbstractAction() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                int row = listTable.getSelectedRow();
-                int col = listTable.getSelectedColumn();
-                if (row >= 0 && col >= 0) {
-                    Object value = listTable.getValueAt(row, col);
-                    if (value != null) {
-                        java.awt.datatransfer.StringSelection selection = new java.awt.datatransfer.StringSelection(value.toString());
-                        java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
-                    }
-                }
-            }
-        });
-		
+		// Add key binding for copy cell value (Cmd+C on Mac, Ctrl+C on Windows/Linux)
+		String copyKey = System.getProperty("os.name").toLowerCase().contains("mac") ? "meta C" : "ctrl C";
+		listTable.getInputMap().put(javax.swing.KeyStroke.getKeyStroke(copyKey), "copyCell");
+		listTable.getActionMap().put("copyCell", new javax.swing.AbstractAction() {
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				int row = listTable.getSelectedRow();
+				int col = listTable.getSelectedColumn();
+				if (row >= 0 && col >= 0) {
+					Object value = listTable.getValueAt(row, col);
+					if (value != null) {
+						java.awt.datatransfer.StringSelection selection = new java.awt.datatransfer.StringSelection(value.toString());
+						java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+					}
+				}
+			}
+		});
+
 		refreshButtonActionPerformed(null);
 	}
 
@@ -277,35 +277,40 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_autoWidthButtonActionPerformed
 
     private void browseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseButtonActionPerformed
-		// get column "RootFolder"
-		int columnIndex = listTable.getColumnModel().getColumnIndex("RootFolder");
-		if (columnIndex < 0) {
-			System.out.println("Column 'RootFolder' not found");
-			return;
-		}
-		// Get the selected row
-		int selectedRow = listTable.getSelectedRow();
-		if (selectedRow < 0) {
-			System.out.println("No row selected");
-			return;
-		}
-		// Get the value of the "RootFolder" column
-		Object value = listTable.getValueAt(selectedRow, columnIndex);
-		if (value == null) {
-			System.out.println("No value found in 'RootFolder' column");
-			return;
-		}
-		String rootFolderUrl = value.toString();
-		org.json.JSONObject jsonObject = new org.json.JSONObject(rootFolderUrl);
-		String serverRelativeUrl = jsonObject.getString("ServerRelativeUrl");
-		// open browser with the URL
-		String fullUrl = rootSiteUrl + serverRelativeUrl;
-		fullUrl = fullUrl.replaceAll(" ", "%20");
-		//encode fullUrl
 		try {
-			System.out.println("Opening URL: " + fullUrl);
-			java.awt.Desktop.getDesktop().browse(URI.create(fullUrl));
-		} catch (Exception e) {
+			// get column "RootFolder"
+			int columnIndex = listTable.getColumnModel().getColumnIndex("RootFolder");
+			if (columnIndex < 0) {
+				System.out.println("Column 'RootFolder' not found");
+				return;
+			}
+			// Get the selected row
+			int selectedRow = listTable.getSelectedRow();
+			if (selectedRow < 0) {
+				System.out.println("No row selected");
+				return;
+			}
+			// Get the value of the "RootFolder" column
+			Object value = listTable.getValueAt(selectedRow, columnIndex);
+			if (value == null) {
+				System.out.println("No value found in 'RootFolder' column");
+				return;
+			}
+			String rootFolderUrl = value.toString();
+			org.json.JSONObject jsonObject = new org.json.JSONObject(rootFolderUrl);
+			String serverRelativeUrl = jsonObject.getString("ServerRelativeUrl");
+			// open browser with the URL
+			String fullUrl = rootSiteUrl + serverRelativeUrl;
+			fullUrl = fullUrl.replaceAll(" ", "%20");
+			//encode fullUrl
+			try {
+				System.out.println("Opening URL: " + fullUrl);
+				java.awt.Desktop.getDesktop().browse(URI.create(fullUrl));
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("Failed to open URL in browser: " + e.getMessage());
+			}
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			System.out.println("Failed to open URL in browser: " + e.getMessage());
 		}
@@ -318,7 +323,46 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_listTableMouseClicked
 
     private void itemButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemButtonActionPerformed
-        // TODO add your handling code here:
+		try {
+			int columnIndex = listTable.getColumnModel().getColumnIndex("Title");
+			if (columnIndex < 0) {
+				System.out.println("Column 'Title' not found");
+				return;
+			}
+			int selectedRow = listTable.getSelectedRow();
+			if (selectedRow < 0) {
+				System.out.println("No row selected");
+				return;
+			}
+			Object listTitle = listTable.getValueAt(selectedRow, columnIndex);
+			if (listTitle == null) {
+				System.out.println("No value found in 'Title' column");
+				return;
+			}
+			
+			
+			
+			 columnIndex = listTable.getColumnModel().getColumnIndex("Id");
+			if (columnIndex < 0) {
+				System.out.println("Column 'Id' not found");
+				return;
+			}
+			Object listId = listTable.getValueAt(selectedRow, columnIndex);
+			if (listTitle == null) {
+				System.out.println("No value found in 'Title' column");
+				return;
+			}
+			
+			
+
+			SPOListItemPanel spoListItemPanel = new SPOListItemPanel(rootSiteUrl, webUrl, listTitle.toString(), listId.toString());
+			jTabbedPane1.addTab("Item", spoListItemPanel);
+			jTabbedPane1.setSelectedComponent(spoListItemPanel);
+
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			System.out.println("Failed to open URL in browser: " + e.getMessage());
+		}
     }//GEN-LAST:event_itemButtonActionPerformed
 
 

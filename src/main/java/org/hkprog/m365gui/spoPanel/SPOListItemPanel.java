@@ -25,11 +25,13 @@ public class SPOListItemPanel extends javax.swing.JPanel {
 	String webUrl;
 	String rootSiteUrl;
 	String listTitle;
+	String listId;
 
-	public SPOListItemPanel(String rootSiteUrl, String webUrl, String listTitle) {
+	public SPOListItemPanel(String rootSiteUrl, String webUrl, String listTitle, String listId) {
 		this.rootSiteUrl = rootSiteUrl;
 		this.webUrl = webUrl;
 		this.listTitle = listTitle;
+		this.listId = listId;
 		initComponents();
 
 		loadListItemInBackground();
@@ -58,6 +60,11 @@ public class SPOListItemPanel extends javax.swing.JPanel {
         refreshButton.setFocusable(false);
         refreshButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         refreshButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
         jToolBar1.add(refreshButton);
 
         filterTextField.setMaximumSize(new java.awt.Dimension(200, 23));
@@ -88,6 +95,10 @@ public class SPOListItemPanel extends javax.swing.JPanel {
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+		loadListItemInBackground();
+    }//GEN-LAST:event_refreshButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exportExcelButton;
@@ -102,7 +113,9 @@ public class SPOListItemPanel extends javax.swing.JPanel {
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				String json = MyLib.run(MainFrame.setting.m365Path + " spo spo listitem list --webUrl " + webUrl + " --listTitle \"" + listTitle + "\" --output json");
+				String command = MainFrame.setting.m365Path + " spo listitem list --webUrl " + webUrl + " --listId " + listId + " --output json";
+				System.out.println(command);
+				String json = MyLib.run(command);
 
 				JSONArray jsonArray = new JSONArray(json);
 				setJsonToTable(jsonArray);
