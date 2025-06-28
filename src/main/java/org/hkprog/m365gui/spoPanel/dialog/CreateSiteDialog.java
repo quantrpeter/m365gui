@@ -10,6 +10,8 @@ package org.hkprog.m365gui.spoPanel.dialog;
  */
 public class CreateSiteDialog extends javax.swing.JDialog {
 
+	private boolean okPressed = false;
+
 	/**
 	 * Creates new form CreateSiteDialog
 	 */
@@ -29,7 +31,7 @@ public class CreateSiteDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         siteTitleTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        siteUrlTextField = new javax.swing.JTextField();
+        aliasTextField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         tyoeComboBox = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
@@ -38,15 +40,14 @@ public class CreateSiteDialog extends javax.swing.JDialog {
         descriptionTextField = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         ownersTextField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        siteUrlLabel = new javax.swing.JLabel();
+        cancelButton = new javax.swing.JButton();
+        createButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Site Title");
 
-        jLabel2.setText("Site URL");
+        jLabel2.setText("Alias");
 
         jLabel3.setText("Type");
 
@@ -60,13 +61,19 @@ public class CreateSiteDialog extends javax.swing.JDialog {
 
         jLabel6.setText("Owners");
 
-        ownersTextField.setText("jTextField1");
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
-        jButton1.setText("Cancel");
-
-        jButton2.setText("Create");
-
-        siteUrlLabel.setText("Site Url");
+        createButton.setText("Create");
+        createButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -85,20 +92,17 @@ public class CreateSiteDialog extends javax.swing.JDialog {
                             .addComponent(jLabel6))
                         .addGap(6, 6, 6)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(siteUrlLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(siteUrlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(ownersTextField, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(tyoeComboBox, 0, 257, Short.MAX_VALUE)
                             .addComponent(templateComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(descriptionTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(siteTitleTextField, javax.swing.GroupLayout.Alignment.LEADING)))
+                            .addComponent(siteTitleTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(aliasTextField)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton2)
+                        .addComponent(createButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)))
+                        .addComponent(cancelButton)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -110,9 +114,8 @@ public class CreateSiteDialog extends javax.swing.JDialog {
                     .addComponent(siteTitleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(siteUrlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(siteUrlLabel))
+                    .addComponent(aliasTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tyoeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -131,13 +134,23 @@ public class CreateSiteDialog extends javax.swing.JDialog {
                     .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(cancelButton)
+                    .addComponent(createButton))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
+        okPressed = true;
+        dispose();
+    }//GEN-LAST:event_createButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        okPressed = false;
+        dispose();
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -182,9 +195,10 @@ public class CreateSiteDialog extends javax.swing.JDialog {
 	}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JTextField aliasTextField;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton createButton;
     public javax.swing.JTextField descriptionTextField;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -193,9 +207,42 @@ public class CreateSiteDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     public javax.swing.JTextField ownersTextField;
     public javax.swing.JTextField siteTitleTextField;
-    private javax.swing.JLabel siteUrlLabel;
-    public javax.swing.JTextField siteUrlTextField;
     public javax.swing.JComboBox<String> templateComboBox;
     public javax.swing.JComboBox<String> tyoeComboBox;
     // End of variables declaration//GEN-END:variables
+
+	// Getter methods for SPOPanel integration
+	public boolean isOkPressed() {
+		return okPressed;
+	}
+	
+	public String getSiteTitle() {
+		return siteTitleTextField.getText().trim();
+	}
+	
+	public String getAlias() {
+		return aliasTextField.getText().trim();
+	}
+	
+	public String getSiteType() {
+		String selected = (String) tyoeComboBox.getSelectedItem();
+		if ("Team Site".equals(selected)) {
+			return "TeamSite";
+		} else if ("Communication Site".equals(selected)) {
+			return "CommunicationSite";
+		}
+		return selected;
+	}
+	
+	public String getTemplate() {
+		return (String) templateComboBox.getSelectedItem();
+	}
+	
+	public String getDescription() {
+		return descriptionTextField.getText().trim();
+	}
+	
+	public String getOwnerEmail() {
+		return ownersTextField.getText().trim();
+	}
 }
