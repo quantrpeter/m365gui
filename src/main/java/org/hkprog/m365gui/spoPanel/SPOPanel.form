@@ -114,10 +114,18 @@
                 </Component>
                 <Component class="javax.swing.JButton" name="createSiteButton">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Create Site"/>
+                    <Property name="text" type="java.lang.String" value="Create"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="createSiteButtonActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="deleteSiteButton">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Del"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteSiteButtonActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="refreshTreeButton">

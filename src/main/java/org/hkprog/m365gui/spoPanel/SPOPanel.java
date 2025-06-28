@@ -270,6 +270,7 @@ public class SPOPanel extends javax.swing.JPanel {
         jPanel4 = new javax.swing.JPanel();
         filterTextField = new javax.swing.JTextField();
         createSiteButton = new javax.swing.JButton();
+        deleteSiteButton = new javax.swing.JButton();
         refreshTreeButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
 
@@ -314,13 +315,21 @@ public class SPOPanel extends javax.swing.JPanel {
         filterTextField.setPreferredSize(new java.awt.Dimension(200, 23));
         jPanel4.add(filterTextField);
 
-        createSiteButton.setText("Create Site");
+        createSiteButton.setText("Create");
         createSiteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createSiteButtonActionPerformed(evt);
             }
         });
         jPanel4.add(createSiteButton);
+
+        deleteSiteButton.setText("Del");
+        deleteSiteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteSiteButtonActionPerformed(evt);
+            }
+        });
+        jPanel4.add(deleteSiteButton);
 
         refreshTreeButton.setText("Refresh");
         refreshTreeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -371,9 +380,43 @@ public class SPOPanel extends javax.swing.JPanel {
         loadSitesInBackground();
     }//GEN-LAST:event_refreshTreeButtonActionPerformed
 
+    private void deleteSiteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteSiteButtonActionPerformed
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) siteTree.getLastSelectedPathComponent();
+        if (selectedNode == null || !(selectedNode.getUserObject() instanceof SiteInfo)) {
+            JOptionPane.showMessageDialog(this, "Please select a site to delete.", "No Site Selected", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        SiteInfo siteInfo = (SiteInfo) selectedNode.getUserObject();
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete site: " + siteInfo.title + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm != JOptionPane.YES_OPTION) return;
+
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                try {
+                    String command = MainFrame.setting.m365Path + " spo site remove -f --url \"" + siteInfo.url + "\"";
+                    System.out.println("Deleting site with command: " + command);
+                    String result = MyLib.run(command);
+                    System.out.println("Site delete result: " + result);
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(SPOPanel.this, "Site '" + siteInfo.title + "' deleted successfully!", "Site Deleted", JOptionPane.INFORMATION_MESSAGE);
+                        loadSitesInBackground();
+                    });
+                } catch (Exception ex) {
+                    javax.swing.SwingUtilities.invokeLater(() -> {
+                        JOptionPane.showMessageDialog(SPOPanel.this, "Error deleting site: " + ex.getMessage(), "Delete Error", JOptionPane.ERROR_MESSAGE);
+                    });
+                }
+                return null;
+            }
+        };
+        worker.execute();
+    }//GEN-LAST:event_deleteSiteButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createSiteButton;
+    private javax.swing.JButton deleteSiteButton;
     private javax.swing.JTextField filterTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

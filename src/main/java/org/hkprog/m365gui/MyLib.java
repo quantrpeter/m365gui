@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -23,7 +25,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.hkprog.m365gui.spoPanel.SPOListItemPanel;
 
 /**
  *
@@ -33,11 +34,43 @@ public class MyLib {
 
 	private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(MyLib.class);
 
+	private static List<String> splitCommand(String command) {
+		List<String> tokens = new ArrayList<>();
+		boolean inQuotes = false;
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < command.length(); i++) {
+			char c = command.charAt(i);
+			if (c == '"') {
+				inQuotes = !inQuotes;
+			} else if (c == ' ' && !inQuotes) {
+				if (sb.length() > 0) {
+					String arg = sb.toString();
+					if (arg.startsWith("\"") && arg.endsWith("\"")) {
+						arg = arg.substring(1, arg.length() - 1);
+					}
+					tokens.add(arg);
+					sb.setLength(0);
+				}
+			} else {
+				sb.append(c);
+			}
+		}
+		if (sb.length() > 0) {
+			String arg = sb.toString();
+			if (arg.startsWith("\"") && arg.endsWith("\"")) {
+				arg = arg.substring(1, arg.length() - 1);
+			}
+			tokens.add(arg);
+		}
+		return tokens;
+	}
+
 	public static String run(String command) {
 		try {
 			Setting setting = new Setting();
 			QuantrSettingLibrary.load("m365gui", setting);
-			ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+(?=(?:(?:[^\"]*\"){2})*[^\"]*$)"));
+			List<String> cmdList = splitCommand(command);
+			ProcessBuilder processBuilder = new ProcessBuilder(cmdList);
 			processBuilder.environment().put("PATH", new File(setting.m365Path).getParent());
 			Process process = processBuilder.start();
 			// Capture output

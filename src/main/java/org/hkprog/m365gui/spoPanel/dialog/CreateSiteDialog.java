@@ -18,6 +18,7 @@ public class CreateSiteDialog extends javax.swing.JDialog {
 	public CreateSiteDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
+		setLocationRelativeTo(null);
 	}
 
 	/**
