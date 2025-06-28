@@ -53,6 +53,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			@Override
 			protected Void doInBackground() throws Exception {
 				refreshButtonActionPerformed(null);
+				refreshPermissionButtonActionPerformed(null);
 				return null;
 			}
 
@@ -86,6 +87,12 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         copyButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listTable = new javax.swing.JTable();
+        permissionPanel = new javax.swing.JPanel();
+        jToolBar2 = new javax.swing.JToolBar();
+        refreshPermissionButton = new javax.swing.JButton();
+        filterPermissionTextField = new javax.swing.JTextField();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        permissionTable = new javax.swing.JTable();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -205,11 +212,55 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Tab Title", listPanel);
 
+        permissionPanel.setLayout(new java.awt.BorderLayout());
+
+        jToolBar2.setRollover(true);
+
+        refreshPermissionButton.setText("Refresh");
+        refreshPermissionButton.setFocusable(false);
+        refreshPermissionButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        refreshPermissionButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        refreshPermissionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshPermissionButtonActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(refreshPermissionButton);
+
+        filterPermissionTextField.setMaximumSize(new java.awt.Dimension(200, 23));
+        filterPermissionTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                filterPermissionTextFieldKeyReleased(evt);
+            }
+        });
+        jToolBar2.add(filterPermissionTextField);
+
+        permissionPanel.add(jToolBar2, java.awt.BorderLayout.PAGE_START);
+
+        permissionTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        permissionTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jScrollPane2.setViewportView(permissionTable);
+
+        permissionPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Permission", permissionPanel);
+
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 	private List<Map<String, Object>> originalData = new ArrayList<>();
 	private List<String> columnNames = new ArrayList<>();
+	private java.util.List<Object[]> permissionTableOriginalData = new java.util.ArrayList<>();
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
 		String command = MainFrame.setting.m365Path + " spo list list --webUrl " + webUrl + " --output json";
@@ -445,22 +496,80 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_copyButtonActionPerformed
 
+    private void refreshPermissionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshPermissionButtonActionPerformed
+        String command = MainFrame.setting.m365Path + " spo web get --url " + webUrl + " --output json";
+        System.out.println(command);
+        String json = MyLib.run(command);
+		org.json.JSONObject obj = new org.json.JSONObject(json);
+		// Build a 2-column table: key, value
+		java.util.List<String> keys = new java.util.ArrayList<>(obj.keySet());
+		Object[][] data = new Object[keys.size()][2];
+		permissionTableOriginalData.clear();
+		for (int i = 0; i < keys.size(); i++) {
+            String key = keys.get(i);
+            Object value = obj.get(key);
+            Object[] row = new Object[] { key, (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value };
+            data[i][0] = row[0];
+            data[i][1] = row[1];
+            permissionTableOriginalData.add(row);
+        }
+        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
+        permissionTable.setModel(model);
+        CommonLib.autoResizeColumnWithHeader(permissionTable);
+    }//GEN-LAST:event_refreshPermissionButtonActionPerformed
+
+    private void filterPermissionTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterPermissionTextFieldKeyReleased
+        String filter = filterPermissionTextField.getText().toLowerCase().trim();
+        if (filter.isEmpty()) {
+            // Show all
+            Object[][] data = new Object[permissionTableOriginalData.size()][2];
+            for (int i = 0; i < permissionTableOriginalData.size(); i++) {
+                data[i][0] = permissionTableOriginalData.get(i)[0];
+                data[i][1] = permissionTableOriginalData.get(i)[1];
+            }
+            javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
+            permissionTable.setModel(model);
+            CommonLib.autoResizeColumnWithHeader(permissionTable);
+            return;
+        }
+        java.util.List<Object[]> filtered = new java.util.ArrayList<>();
+        for (Object[] row : permissionTableOriginalData) {
+            if (row[0].toString().toLowerCase().contains(filter) || (row[1] != null && row[1].toString().toLowerCase().contains(filter))) {
+                filtered.add(row);
+            }
+        }
+        Object[][] data = new Object[filtered.size()][2];
+        for (int i = 0; i < filtered.size(); i++) {
+            data[i][0] = filtered.get(i)[0];
+            data[i][1] = filtered.get(i)[1];
+        }
+        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
+        permissionTable.setModel(model);
+        CommonLib.autoResizeColumnWithHeader(permissionTable);
+    }//GEN-LAST:event_filterPermissionTextFieldKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton autoWidthButton;
     private javax.swing.JButton browseButton;
     private javax.swing.JButton copyButton;
     private javax.swing.JTextField filterColumnTextField;
+    private javax.swing.JTextField filterPermissionTextField;
     private javax.swing.JTextField filterTextField;
     private javax.swing.JButton itemButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar jToolBar2;
     private javax.swing.JPanel listPanel;
     private javax.swing.JTable listTable;
+    private javax.swing.JPanel permissionPanel;
+    private javax.swing.JTable permissionTable;
     private javax.swing.JButton refreshButton;
+    private javax.swing.JButton refreshPermissionButton;
     private javax.swing.JButton viewButton;
     // End of variables declaration//GEN-END:variables
 

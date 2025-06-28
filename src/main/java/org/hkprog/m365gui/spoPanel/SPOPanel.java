@@ -312,7 +312,7 @@ public class SPOPanel extends javax.swing.JPanel {
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        filterTextField.setPreferredSize(new java.awt.Dimension(200, 23));
+        filterTextField.setPreferredSize(new java.awt.Dimension(200, 26));
         jPanel4.add(filterTextField);
 
         createSiteButton.setText("Create");
