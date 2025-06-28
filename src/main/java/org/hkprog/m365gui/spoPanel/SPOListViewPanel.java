@@ -1,18 +1,11 @@
 package org.hkprog.m365gui.spoPanel;
 
 import hk.quantr.javalib.CommonLib;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import javax.swing.SwingWorker;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import org.hkprog.m365gui.MainFrame;
 import org.hkprog.m365gui.MyLib;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import javax.swing.table.TableModel;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.swing.table.DefaultTableModel;
@@ -88,19 +81,24 @@ public class SPOListViewPanel extends javax.swing.JPanel {
         exportExcelButton.setFocusable(false);
         exportExcelButton.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         exportExcelButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        exportExcelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportExcelButtonActionPerformed(evt);
+            }
+        });
         jToolBar1.add(exportExcelButton);
 
         add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         mainTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {},
+                {},
+                {},
+                {}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         mainTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
@@ -116,6 +114,10 @@ public class SPOListViewPanel extends javax.swing.JPanel {
     private void autoWidthButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoWidthButtonActionPerformed
 		CommonLib.autoResizeColumnWithHeader(mainTable);
     }//GEN-LAST:event_autoWidthButtonActionPerformed
+
+    private void exportExcelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportExcelButtonActionPerformed
+		MyLib.exportTableToExcel(this, mainTable, listTitle.replaceAll("[^a-zA-Z0-9]", "_") + "_export.xlsx", listTitle);
+    }//GEN-LAST:event_exportExcelButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
