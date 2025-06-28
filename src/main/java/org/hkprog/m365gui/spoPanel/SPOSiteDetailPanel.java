@@ -54,6 +54,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			protected Void doInBackground() throws Exception {
 				refreshButtonActionPerformed(null);
 				refreshPermissionButtonActionPerformed(null);
+				refreshGroupButtonActionPerformed(null);
 				return null;
 			}
 
@@ -93,6 +94,12 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         filterPermissionTextField = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         permissionTable = new javax.swing.JTable();
+        groupPanel = new javax.swing.JPanel();
+        jToolBar3 = new javax.swing.JToolBar();
+        refreshGroupButton = new javax.swing.JButton();
+        filterGroupTextField = new javax.swing.JTextField();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        groupTable = new javax.swing.JTable();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -255,12 +262,56 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Permission", permissionPanel);
 
+        groupPanel.setLayout(new java.awt.BorderLayout());
+
+        jToolBar3.setRollover(true);
+
+        refreshGroupButton.setText("Refresh");
+        refreshGroupButton.setFocusable(false);
+        refreshGroupButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        refreshGroupButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        refreshGroupButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshGroupButtonActionPerformed(evt);
+            }
+        });
+        jToolBar3.add(refreshGroupButton);
+
+        filterGroupTextField.setMaximumSize(new java.awt.Dimension(200, 23));
+        filterGroupTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                filterGroupTextFieldKeyReleased(evt);
+            }
+        });
+        jToolBar3.add(filterGroupTextField);
+
+        groupPanel.add(jToolBar3, java.awt.BorderLayout.PAGE_START);
+
+        groupTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        groupTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jScrollPane3.setViewportView(groupTable);
+
+        groupPanel.add(jScrollPane3, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Group", groupPanel);
+
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 	private List<Map<String, Object>> originalData = new ArrayList<>();
 	private List<String> columnNames = new ArrayList<>();
 	private java.util.List<Object[]> permissionTableOriginalData = new java.util.ArrayList<>();
+	private java.util.List<org.json.JSONObject> groupTableOriginalData = new java.util.ArrayList<>();
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
 		String command = MainFrame.setting.m365Path + " spo list list --webUrl " + webUrl + " --output json";
@@ -427,10 +478,6 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				return;
 			}
 			Object listTitle = listTable.getValueAt(selectedRow, columnIndex);
-			if (listTitle == null) {
-				System.out.println("No value found in 'Title' column");
-				return;
-			}
 
 			columnIndex = listTable.getColumnModel().getColumnIndex("Id");
 			if (columnIndex < 0) {
@@ -438,10 +485,6 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				return;
 			}
 			Object listId = listTable.getValueAt(selectedRow, columnIndex);
-			if (listTitle == null) {
-				System.out.println("No value found in 'Title' column");
-				return;
-			}
 
 			SPOListItemPanel spoListItemPanel = new SPOListItemPanel(rootSiteUrl, webUrl, listTitle.toString(), listId.toString());
 			jTabbedPane1.addTab(listTitle.toString() + " - Item", spoListItemPanel);
@@ -466,10 +509,6 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				return;
 			}
 			Object listTitle = listTable.getValueAt(selectedRow, columnIndex);
-			if (listTitle == null) {
-				System.out.println("No value found in 'Title' column");
-				return;
-			}
 
 			columnIndex = listTable.getColumnModel().getColumnIndex("Id");
 			if (columnIndex < 0) {
@@ -477,10 +516,6 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				return;
 			}
 			Object listId = listTable.getValueAt(selectedRow, columnIndex);
-			if (listTitle == null) {
-				System.out.println("No value found in 'Title' column");
-				return;
-			}
 
 			SPOListViewPanel spoListItemPanel = new SPOListViewPanel(rootSiteUrl, webUrl, listTitle.toString(), listId.toString());
 			jTabbedPane1.addTab(listTitle.toString() + " - View", spoListItemPanel);
@@ -548,27 +583,104 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         CommonLib.autoResizeColumnWithHeader(permissionTable);
     }//GEN-LAST:event_filterPermissionTextFieldKeyReleased
 
+    private void refreshGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshGroupButtonActionPerformed
+        String command = MainFrame.setting.m365Path + " spo group list --webUrl " + webUrl + " --output json";
+        System.out.println(command);
+        String json = MyLib.run(command);
+        try {
+            org.json.JSONArray arr = new org.json.JSONArray(json);
+            groupTableOriginalData.clear();
+            String[] columns;
+            if (arr.length() > 0) {
+                org.json.JSONObject first = arr.getJSONObject(0);
+                java.util.List<String> colList = new java.util.ArrayList<>(first.keySet());
+                columns = colList.toArray(new String[0]);
+            } else {
+                columns = new String[]{};
+            }
+            Object[][] data = new Object[arr.length()][columns.length];
+            for (int i = 0; i < arr.length(); i++) {
+                org.json.JSONObject obj = arr.getJSONObject(i);
+                groupTableOriginalData.add(obj);
+                for (int j = 0; j < columns.length; j++) {
+                    Object value = obj.opt(columns[j]);
+                    data[i][j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
+                }
+            }
+            javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, columns);
+            groupTable.setModel(model);
+            CommonLib.autoResizeColumnWithHeader(groupTable);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_refreshGroupButtonActionPerformed
+
+    private void filterGroupTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_filterGroupTextFieldKeyReleased
+        String filter = filterGroupTextField.getText().trim().toLowerCase();
+        if (groupTableOriginalData.isEmpty()) return;
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) groupTable.getModel();
+        if (filter.isEmpty()) {
+            // Restore all rows
+            model.setRowCount(0);
+            for (org.json.JSONObject obj : groupTableOriginalData) {
+                Object[] row = new Object[model.getColumnCount()];
+                for (int j = 0; j < model.getColumnCount(); j++) {
+                    Object value = obj.opt(model.getColumnName(j));
+                    row[j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
+                }
+                model.addRow(row);
+            }
+        } else {
+            model.setRowCount(0);
+            for (org.json.JSONObject obj : groupTableOriginalData) {
+                boolean match = false;
+                for (String key : obj.keySet()) {
+                    Object value = obj.opt(key);
+                    if (value != null && value.toString().toLowerCase().contains(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+                if (match) {
+                    Object[] row = new Object[model.getColumnCount()];
+                    for (int j = 0; j < model.getColumnCount(); j++) {
+                        Object value = obj.opt(model.getColumnName(j));
+                        row[j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
+                    }
+                    model.addRow(row);
+                }
+            }
+        }
+        CommonLib.autoResizeColumnWithHeader(groupTable);
+    }//GEN-LAST:event_filterGroupTextFieldKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton autoWidthButton;
     private javax.swing.JButton browseButton;
     private javax.swing.JButton copyButton;
     private javax.swing.JTextField filterColumnTextField;
+    private javax.swing.JTextField filterGroupTextField;
     private javax.swing.JTextField filterPermissionTextField;
     private javax.swing.JTextField filterTextField;
+    private javax.swing.JPanel groupPanel;
+    private javax.swing.JTable groupTable;
     private javax.swing.JButton itemButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
+    private javax.swing.JToolBar jToolBar3;
     private javax.swing.JPanel listPanel;
     private javax.swing.JTable listTable;
     private javax.swing.JPanel permissionPanel;
     private javax.swing.JTable permissionTable;
     private javax.swing.JButton refreshButton;
+    private javax.swing.JButton refreshGroupButton;
     private javax.swing.JButton refreshPermissionButton;
     private javax.swing.JButton viewButton;
     // End of variables declaration//GEN-END:variables
