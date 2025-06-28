@@ -1,17 +1,11 @@
 package org.hkprog.m365gui.spoPanel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import hk.quantr.javalib.CommonLib;
 import javax.swing.SwingWorker;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import org.hkprog.m365gui.MainFrame;
 import org.hkprog.m365gui.MyLib;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import javax.swing.table.TableModel;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.swing.table.DefaultTableModel;
@@ -47,6 +41,7 @@ public class SPOListItemPanel extends javax.swing.JPanel {
 
         jToolBar1 = new javax.swing.JToolBar();
         refreshButton = new javax.swing.JButton();
+        autoWidthButton = new javax.swing.JButton();
         filterTextField = new javax.swing.JTextField();
         exportExcelButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -66,6 +61,17 @@ public class SPOListItemPanel extends javax.swing.JPanel {
             }
         });
         jToolBar1.add(refreshButton);
+
+        autoWidthButton.setText("Auto Width");
+        autoWidthButton.setFocusable(false);
+        autoWidthButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        autoWidthButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        autoWidthButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoWidthButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(autoWidthButton);
 
         filterTextField.setMaximumSize(new java.awt.Dimension(200, 23));
         jToolBar1.add(filterTextField);
@@ -99,8 +105,13 @@ public class SPOListItemPanel extends javax.swing.JPanel {
 		loadListItemInBackground();
     }//GEN-LAST:event_refreshButtonActionPerformed
 
+    private void autoWidthButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoWidthButtonActionPerformed
+		CommonLib.autoResizeColumnWithHeader(mainTable);
+    }//GEN-LAST:event_autoWidthButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton autoWidthButton;
     private javax.swing.JButton exportExcelButton;
     private javax.swing.JTextField filterTextField;
     private javax.swing.JScrollPane jScrollPane1;
@@ -119,12 +130,12 @@ public class SPOListItemPanel extends javax.swing.JPanel {
 
 				JSONArray jsonArray = new JSONArray(json);
 				setJsonToTable(jsonArray);
-
 				return null;
 			}
 
 			@Override
 			protected void done() {
+				CommonLib.autoResizeColumnWithHeader(mainTable);
 			}
 		};
 		worker.execute();

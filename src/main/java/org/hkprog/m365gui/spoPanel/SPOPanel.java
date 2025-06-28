@@ -337,8 +337,8 @@ public class SPOPanel extends javax.swing.JPanel {
 			if (selectedNode != null && selectedNode.getUserObject() instanceof SiteInfo) {
 				SiteInfo siteInfo = (SiteInfo) selectedNode.getUserObject();
 				String siteUrl = siteInfo.url;
-				System.out.println(siteUrl);
-				SPOSiteDetailPanel siteDetailPanel = new SPOSiteDetailPanel(rootSiteUrl, siteUrl);
+				System.out.println("siteUrl=" + siteUrl);
+				SPOSiteDetailPanel siteDetailPanel = new SPOSiteDetailPanel(siteInfo.title, rootSiteUrl, siteUrl);
 				jSplitPane1.setRightComponent(siteDetailPanel);
 			}
 		}

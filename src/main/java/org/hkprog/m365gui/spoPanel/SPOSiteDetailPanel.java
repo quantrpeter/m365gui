@@ -18,14 +18,17 @@ import javax.swing.SwingWorker;
  */
 public class SPOSiteDetailPanel extends javax.swing.JPanel {
 
+	String siteTitle;
 	String webUrl;
 	String rootSiteUrl;
 
-	public SPOSiteDetailPanel(String rootSiteUrl, String webUrl) {
+	public SPOSiteDetailPanel(String siteTitle, String rootSiteUrl, String webUrl) {
+		this.siteTitle = siteTitle;
 		this.rootSiteUrl = rootSiteUrl;
 		this.webUrl = webUrl;
 		initComponents();
 
+		jTabbedPane1.setTitleAt(0, siteTitle);
 		listTable.setDefaultRenderer(Object.class, new MyTableCellRenderer());
 
 		// Add key binding for copy cell value (Cmd+C on Mac, Ctrl+C on Windows/Linux)
@@ -188,7 +191,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 
         listPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("Item", listPanel);
+        jTabbedPane1.addTab("Tab Title", listPanel);
 
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
