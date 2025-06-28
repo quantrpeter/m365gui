@@ -40,7 +40,6 @@ public class SPOPanel extends javax.swing.JPanel {
 		java.awt.CardLayout cardLayout = (java.awt.CardLayout) getLayout();
 		cardLayout.show(this, "loadingCard");
 
-		// Load sites in background
 		loadSitesInBackground();
 	}
 

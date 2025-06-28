@@ -2,8 +2,6 @@ package org.hkprog.m365gui.spoPanel;
 
 import hk.quantr.javalib.CommonLib;
 import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import org.hkprog.m365gui.MainFrame;
 import org.hkprog.m365gui.MyLib;
 
@@ -18,17 +16,36 @@ import java.util.Map;
  * @author Peter <peter@quantr.hk>
  */
 public class SPOSiteDetailPanel extends javax.swing.JPanel {
-
+	
 	String webUrl;
 	String rootSiteUrl;
 
-	/**
-	 * Creates new form SPOSiteDetailPanel
-	 */
 	public SPOSiteDetailPanel(String rootSiteUrl, String webUrl) {
 		this.rootSiteUrl = rootSiteUrl;
 		this.webUrl = webUrl;
 		initComponents();
+
+		listTable.setDefaultRenderer(Object.class, new MyTableCellRenderer());
+
+        // Add key binding for copy cell value (Cmd+C on Mac, Ctrl+C on Windows/Linux)
+        String copyKey = System.getProperty("os.name").toLowerCase().contains("mac") ? "meta C" : "ctrl C";
+        listTable.getInputMap().put(javax.swing.KeyStroke.getKeyStroke(copyKey), "copyCell");
+        listTable.getActionMap().put("copyCell", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                int row = listTable.getSelectedRow();
+                int col = listTable.getSelectedColumn();
+                if (row >= 0 && col >= 0) {
+                    Object value = listTable.getValueAt(row, col);
+                    if (value != null) {
+                        java.awt.datatransfer.StringSelection selection = new java.awt.datatransfer.StringSelection(value.toString());
+                        java.awt.Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+                    }
+                }
+            }
+        });
+		
+		refreshButtonActionPerformed(null);
 	}
 
 	/**
@@ -124,6 +141,11 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
             }
         ));
         listTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        listTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(listTable);
 
         listPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -275,6 +297,12 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			System.out.println("Failed to open URL in browser: " + e.getMessage());
 		}
     }//GEN-LAST:event_browseButtonActionPerformed
+
+    private void listTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listTableMouseClicked
+		if (evt.getClickCount() == 2) {
+			browseButtonActionPerformed(null);
+		}
+    }//GEN-LAST:event_listTableMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
