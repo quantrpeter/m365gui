@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -45,7 +46,18 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			}
 		});
 
-		refreshButtonActionPerformed(null);
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				refreshButtonActionPerformed(null);
+				return null;
+			}
+
+			@Override
+			protected void done() {
+			}
+		};
+		worker.execute();
 	}
 
 	/**
@@ -67,6 +79,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         filterColumnTextField = new javax.swing.JTextField();
         browseButton = new javax.swing.JButton();
         itemButton = new javax.swing.JButton();
+        viewButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listTable = new javax.swing.JTable();
 
@@ -143,6 +156,18 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         });
         jToolBar1.add(itemButton);
 
+        viewButton.setText("View");
+        viewButton.setToolTipText("");
+        viewButton.setFocusable(false);
+        viewButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        viewButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        viewButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(viewButton);
+
         listPanel.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         listTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -163,7 +188,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 
         listPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("List", listPanel);
+        jTabbedPane1.addTab("Item", listPanel);
 
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -172,8 +197,9 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 	private List<String> columnNames = new ArrayList<>();
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-		String json = MyLib.run(MainFrame.setting.m365Path + " spo list list --webUrl " + webUrl + " --output json");
-		System.out.println(MainFrame.setting.m365Path + " spo list list --webUrl " + webUrl + " --output json");
+		String command = MainFrame.setting.m365Path + " spo list list --webUrl " + webUrl + " --output json";
+		System.out.println(command);
+		String json = MyLib.run(command);
 		try {
 			org.json.JSONArray arr = new org.json.JSONArray(json);
 			TableModelList model = new TableModelList(arr);
@@ -339,10 +365,8 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				System.out.println("No value found in 'Title' column");
 				return;
 			}
-			
-			
-			
-			 columnIndex = listTable.getColumnModel().getColumnIndex("Id");
+
+			columnIndex = listTable.getColumnModel().getColumnIndex("Id");
 			if (columnIndex < 0) {
 				System.out.println("Column 'Id' not found");
 				return;
@@ -352,11 +376,9 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				System.out.println("No value found in 'Title' column");
 				return;
 			}
-			
-			
 
 			SPOListItemPanel spoListItemPanel = new SPOListItemPanel(rootSiteUrl, webUrl, listTitle.toString(), listId.toString());
-			jTabbedPane1.addTab("Item", spoListItemPanel);
+			jTabbedPane1.addTab(listTitle.toString() + " - Item", spoListItemPanel);
 			jTabbedPane1.setSelectedComponent(spoListItemPanel);
 
 		} catch (IllegalArgumentException e) {
@@ -364,6 +386,45 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			System.out.println("Failed to open URL in browser: " + e.getMessage());
 		}
     }//GEN-LAST:event_itemButtonActionPerformed
+
+    private void viewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewButtonActionPerformed
+		try {
+			int columnIndex = listTable.getColumnModel().getColumnIndex("Title");
+			if (columnIndex < 0) {
+				System.out.println("Column 'Title' not found");
+				return;
+			}
+			int selectedRow = listTable.getSelectedRow();
+			if (selectedRow < 0) {
+				System.out.println("No row selected");
+				return;
+			}
+			Object listTitle = listTable.getValueAt(selectedRow, columnIndex);
+			if (listTitle == null) {
+				System.out.println("No value found in 'Title' column");
+				return;
+			}
+
+			columnIndex = listTable.getColumnModel().getColumnIndex("Id");
+			if (columnIndex < 0) {
+				System.out.println("Column 'Id' not found");
+				return;
+			}
+			Object listId = listTable.getValueAt(selectedRow, columnIndex);
+			if (listTitle == null) {
+				System.out.println("No value found in 'Title' column");
+				return;
+			}
+
+			SPOListViewPanel spoListItemPanel = new SPOListViewPanel(rootSiteUrl, webUrl, listTitle.toString(), listId.toString());
+			jTabbedPane1.addTab(listTitle.toString() + " - View", spoListItemPanel);
+			jTabbedPane1.setSelectedComponent(spoListItemPanel);
+
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			System.out.println("Failed to open URL in browser: " + e.getMessage());
+		}
+    }//GEN-LAST:event_viewButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -380,6 +441,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     private javax.swing.JPanel listPanel;
     private javax.swing.JTable listTable;
     private javax.swing.JButton refreshButton;
+    private javax.swing.JButton viewButton;
     // End of variables declaration//GEN-END:variables
 
 }
