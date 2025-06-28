@@ -83,6 +83,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         browseButton = new javax.swing.JButton();
         itemButton = new javax.swing.JButton();
         viewButton = new javax.swing.JButton();
+        copyButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listTable = new javax.swing.JTable();
 
@@ -170,6 +171,17 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
             }
         });
         jToolBar1.add(viewButton);
+
+        copyButton.setText("Copy");
+        copyButton.setFocusable(false);
+        copyButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        copyButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        copyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(copyButton);
 
         listPanel.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
@@ -429,10 +441,15 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		}
     }//GEN-LAST:event_viewButtonActionPerformed
 
+    private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_copyButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton autoWidthButton;
     private javax.swing.JButton browseButton;
+    private javax.swing.JButton copyButton;
     private javax.swing.JTextField filterColumnTextField;
     private javax.swing.JTextField filterTextField;
     private javax.swing.JButton itemButton;
