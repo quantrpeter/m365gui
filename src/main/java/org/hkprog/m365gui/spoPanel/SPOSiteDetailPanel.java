@@ -66,6 +66,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         filterColumnTextField = new javax.swing.JTextField();
         browseButton = new javax.swing.JButton();
+        itemButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listTable = new javax.swing.JTable();
 
@@ -129,6 +130,18 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
             }
         });
         jToolBar1.add(browseButton);
+
+        itemButton.setText("Item");
+        itemButton.setToolTipText("");
+        itemButton.setFocusable(false);
+        itemButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        itemButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        itemButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(itemButton);
 
         listPanel.add(jToolBar1, java.awt.BorderLayout.NORTH);
 
@@ -304,12 +317,17 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		}
     }//GEN-LAST:event_listTableMouseClicked
 
+    private void itemButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_itemButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton autoWidthButton;
     private javax.swing.JButton browseButton;
     private javax.swing.JTextField filterColumnTextField;
     private javax.swing.JTextField filterTextField;
+    private javax.swing.JButton itemButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;

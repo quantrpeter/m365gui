@@ -11,6 +11,10 @@ import org.hkprog.m365gui.MainFrame;
 import org.hkprog.m365gui.MyLib;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import javax.swing.table.TableModel;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -98,7 +102,10 @@ public class SPOListItemPanel extends javax.swing.JPanel {
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				String json = MyLib.run(MainFrame.setting.m365Path + " spo spo listitem list --webUrl " + webUrl + " --output json");
+				String json = MyLib.run(MainFrame.setting.m365Path + " spo spo listitem list --webUrl " + webUrl + " --listTitle \"" + listTitle + "\" --output json");
+
+				JSONArray jsonArray = new JSONArray(json);
+				setJsonToTable(jsonArray);
 
 				return null;
 			}
@@ -108,5 +115,32 @@ public class SPOListItemPanel extends javax.swing.JPanel {
 			}
 		};
 		worker.execute();
+	}
+
+	private void setJsonToTable(JSONArray jsonArray) {
+		if (jsonArray.length() == 0) {
+			return;
+		}
+		// Collect all unique keys as columns
+		Set<String> columns = new LinkedHashSet<>();
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject obj = jsonArray.getJSONObject(i);
+			columns.addAll(obj.keySet());
+		}
+		String[] colArr = columns.toArray(new String[0]);
+		Object[][] data = new Object[jsonArray.length()][colArr.length];
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject obj = jsonArray.getJSONObject(i);
+			for (int j = 0; j < colArr.length; j++) {
+				Object val = obj.has(colArr[j]) ? obj.get(colArr[j]) : null;
+				if (val instanceof JSONObject || val instanceof JSONArray) {
+					data[i][j] = val.toString();
+				} else {
+					data[i][j] = val;
+				}
+			}
+		}
+		DefaultTableModel model = new DefaultTableModel(data, colArr);
+		mainTable.setModel(model);
 	}
 }
