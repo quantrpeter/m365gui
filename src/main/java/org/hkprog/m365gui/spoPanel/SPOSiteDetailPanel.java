@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.swing.SwingWorker;
+import org.hkprog.m365gui.spoPanel.mxGraph.MyGraphComponent;
 
 /**
  *
@@ -767,12 +768,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		} finally {
 			mxGraph.getModel().endUpdate();
 		}
-		com.mxgraph.swing.mxGraphComponent graphComponent = new com.mxgraph.swing.mxGraphComponent(mxGraph) {
-			@Override
-			public boolean isEditEvent(java.awt.event.MouseEvent e) {
-				return false;
-			}
-		};
+		MyGraphComponent graphComponent = new MyGraphComponent(mxGraph);
 		graphComponent.setConnectable(false);
 		graphComponent.getGraph().setAllowDanglingEdges(false);
 		graphComponent.getGraph().setCellsDisconnectable(false);
@@ -835,16 +831,25 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_formatButtonActionPerformed
 
     private void zoomInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomInButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_zoomInButtonActionPerformed
+		if (jGraphTPanel.getComponentCount() > 0 && jGraphTPanel.getComponent(0) instanceof com.mxgraph.swing.mxGraphComponent) {
+			com.mxgraph.swing.mxGraphComponent graphComponent = (com.mxgraph.swing.mxGraphComponent) jGraphTPanel.getComponent(0);
+			graphComponent.zoomIn();
+		}
+	}//GEN-LAST:event_zoomInButtonActionPerformed
 
-    private void zoom100ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoom100ButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_zoom100ButtonActionPerformed
+	private void zoom100ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoom100ButtonActionPerformed
+		if (jGraphTPanel.getComponentCount() > 0 && jGraphTPanel.getComponent(0) instanceof com.mxgraph.swing.mxGraphComponent) {
+			com.mxgraph.swing.mxGraphComponent graphComponent = (com.mxgraph.swing.mxGraphComponent) jGraphTPanel.getComponent(0);
+			graphComponent.zoomActual();
+		}
+	}//GEN-LAST:event_zoom100ButtonActionPerformed
 
-    private void zoomOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomOutButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_zoomOutButtonActionPerformed
+	private void zoomOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomOutButtonActionPerformed
+		if (jGraphTPanel.getComponentCount() > 0 && jGraphTPanel.getComponent(0) instanceof com.mxgraph.swing.mxGraphComponent) {
+			com.mxgraph.swing.mxGraphComponent graphComponent = (com.mxgraph.swing.mxGraphComponent) jGraphTPanel.getComponent(0);
+			graphComponent.zoomOut();
+		}
+	}//GEN-LAST:event_zoomOutButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
