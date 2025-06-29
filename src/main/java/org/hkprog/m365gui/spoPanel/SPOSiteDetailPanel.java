@@ -1,5 +1,6 @@
 package org.hkprog.m365gui.spoPanel;
 
+import com.mxgraph.view.mxGraph;
 import hk.quantr.javalib.CommonLib;
 import java.net.URI;
 import org.hkprog.m365gui.MainFrame;
@@ -103,6 +104,8 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         permissionGraphPanel = new javax.swing.JPanel();
         jToolBar4 = new javax.swing.JToolBar();
         refreshPermissionGraphButton = new javax.swing.JButton();
+        layoutComboBox = new javax.swing.JComboBox<>();
+        formatButton = new javax.swing.JButton();
         jGraphTPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
@@ -323,6 +326,21 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
             }
         });
         jToolBar4.add(refreshPermissionGraphButton);
+
+        layoutComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Compact Tree Layout", "Hierarchical Layout", "Circle Layout", "Edge Label Layout", "Fast Organic Layout", "Organic Layout", "Parallel Edge Layout", "Partition Layout", "Stack Layout" }));
+        layoutComboBox.setMaximumSize(new java.awt.Dimension(180, 23));
+        jToolBar4.add(layoutComboBox);
+
+        formatButton.setText("Format");
+        formatButton.setFocusable(false);
+        formatButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        formatButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        formatButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formatButtonActionPerformed(evt);
+            }
+        });
+        jToolBar4.add(formatButton);
 
         permissionGraphPanel.add(jToolBar4, java.awt.BorderLayout.PAGE_START);
 
@@ -687,6 +705,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		jGraphTPanel.removeAll();
 		com.mxgraph.view.mxGraph mxGraph = new com.mxgraph.view.mxGraph();
 		Object parent = mxGraph.getDefaultParent();
+		mxGraph.setAutoSizeCells(true);
 		mxGraph.getModel().beginUpdate();
 		try {
 			Object site = mxGraph.insertVertex(parent, null, siteTitle, 100, 100, 60, 40);
@@ -695,56 +714,20 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			System.out.println(command);
 			String json = MyLib.run(command);
 			org.json.JSONArray arr = new org.json.JSONArray(json);
-			Map<String, Object> groupVertices = new HashMap<>();
 			for (int i = 0; i < arr.length(); i++) {
 				org.json.JSONObject group = arr.getJSONObject(i);
-				String groupName = group.optString("Title", "Group " + (i + 1));
-				Object groupVertex = mxGraph.insertVertex(parent, null, groupName,
-						Math.random() * 400, Math.random() * 400, 80, 30);
-				groupVertices.put(groupName, groupVertex);
-				mxGraph.insertEdge(parent, null, "Group", site, groupVertex);
+				String groupName = group.getString("Title");
+				int groupId = group.getInt("Id");
+				System.out.println(">>> " + groupName);
+
+				String style = "shape=rectangle;rounded=1;fillColor=white;strokeColor=black;strokeWidth=1;";
+				Object groupVertex = mxGraph.insertVertex(parent, null, groupName, Math.random() * 400, Math.random() * 400, 0, 0, style);
+				mxGraph.updateCellSize(groupVertex);
+
+				mxGraph.insertEdge(parent, null, null, site, groupVertex);
+
+				addGroupMemberToChart(mxGraph, parent, groupVertex, groupId, groupName);
 			}
-			// spo web get --url
-			command = MainFrame.setting.m365Path + " spo web get --url " + webUrl + " --output json";
-			System.out.println(command);
-			json = MyLib.run(command);
-			org.json.JSONObject webObj = new org.json.JSONObject(json);
-			String webTitle = webObj.optString("Title", "Web");
-			Object webVertex = mxGraph.insertVertex(parent, null, webTitle,
-					Math.random() * 400, Math.random() * 400, 80, 30);
-			mxGraph.insertEdge(parent, null, "Web", site, webVertex);
-			// Add permissions
-			org.json.JSONArray permissions = webObj.optJSONArray("EffectiveBasePermissions");
-			if (permissions != null) {
-				for (int i = 0; i < permissions.length(); i++) {
-					org.json.JSONObject perm = permissions.getJSONObject(i);
-					String permName = perm.optString("Name", "Permission " + (i +	 1));
-					Object permVertex = mxGraph.insertVertex(parent, null, permName,
-							Math.random() * 400, Math.random() * 400, 80, 30);
-					mxGraph.insertEdge(parent, null, "Permission", webVertex, permVertex);
-					// Connect permissions to groups
-					for (String groupName : groupVertices.keySet()) {
-						Object groupVertex = groupVertices.get(groupName);
-						if (Math.random() < 0.5) { // Randomly connect some groups
-							mxGraph.insertEdge(parent, null, "Has Permission", groupVertex, permVertex);
-						}
-					}
-				}
-			} else {
-				System.out.println("No EffectiveBasePermissions found in web object.");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Error generating permission graph: " + e.getMessage());
-			javax.swing.JOptionPane.showMessageDialog(this, "Error generating permission graph: " + e.getMessage(),
-					"Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-			return;
-		} catch (OutOfMemoryError e) {
-			e.printStackTrace();
-			System.out.println("Out of memory error generating permission graph: " + e.getMessage());
-			javax.swing.JOptionPane.showMessageDialog(this, "Out of memory error generating permission graph: " + e.getMessage(),
-					"Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-			return;
 		} finally {
 			mxGraph.getModel().endUpdate();
 		}
@@ -766,6 +749,55 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		jGraphTPanel.repaint();
 	}//GEN-LAST:event_refreshPermissionGraphButtonActionPerformed
 
+    private void formatButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formatButtonActionPerformed
+		String selectedLayout = (String) layoutComboBox.getSelectedItem();
+		if (selectedLayout == null || jGraphTPanel.getComponentCount() == 0) {
+			return;
+		}
+		com.mxgraph.view.mxGraph mxGraph = ((com.mxgraph.swing.mxGraphComponent) jGraphTPanel.getComponent(0)).getGraph();
+		mxGraph.getModel().beginUpdate();
+		try {
+			if (selectedLayout.equals("Hierarchical Layout")) {
+				com.mxgraph.layout.hierarchical.mxHierarchicalLayout layout = new com.mxgraph.layout.hierarchical.mxHierarchicalLayout(mxGraph);
+				layout.execute(mxGraph.getDefaultParent());
+			} else if (selectedLayout.equals("Circle Layout")) {
+				com.mxgraph.layout.mxCircleLayout layout = new com.mxgraph.layout.mxCircleLayout(mxGraph);
+				layout.setRadius(200);
+				layout.execute(mxGraph.getDefaultParent());
+			} else if (selectedLayout.equals("Compact Tree Layout")) {
+				com.mxgraph.layout.mxCompactTreeLayout layout = new com.mxgraph.layout.mxCompactTreeLayout(mxGraph);
+				layout.setLevelDistance(50);
+				layout.execute(mxGraph.getDefaultParent());
+			} else if (selectedLayout.equals("Edge Label Layout")) {
+				com.mxgraph.layout.mxEdgeLabelLayout layout = new com.mxgraph.layout.mxEdgeLabelLayout(mxGraph);
+				layout.execute(mxGraph.getDefaultParent());
+			} else if (selectedLayout.equals("Fast Organic Layout")) {
+				com.mxgraph.layout.mxFastOrganicLayout layout = new com.mxgraph.layout.mxFastOrganicLayout(mxGraph);
+				layout.setForceConstant(100);
+				layout.execute(mxGraph.getDefaultParent());
+			} else if (selectedLayout.equals("Organic Layout")) {
+				com.mxgraph.layout.mxOrganicLayout layout = new com.mxgraph.layout.mxOrganicLayout(mxGraph);
+				layout.execute(mxGraph.getDefaultParent());
+			} else if (selectedLayout.equals("Parallel Edge Layout")) {
+				com.mxgraph.layout.mxParallelEdgeLayout layout = new com.mxgraph.layout.mxParallelEdgeLayout(mxGraph);
+				layout.execute(mxGraph.getDefaultParent());
+			} else if (selectedLayout.equals("Partition Layout")) {
+				com.mxgraph.layout.mxPartitionLayout layout = new com.mxgraph.layout.mxPartitionLayout(mxGraph);
+				layout.execute(mxGraph.getDefaultParent());
+			} else if (selectedLayout.equals("Stack Layout")) {
+				com.mxgraph.layout.mxStackLayout layout = new com.mxgraph.layout.mxStackLayout(mxGraph);
+				layout.execute(mxGraph.getDefaultParent());
+			}
+		} finally {
+			mxGraph.getModel().endUpdate();
+		}
+		// Refresh the graph component to apply the layout changes
+		com.mxgraph.swing.mxGraphComponent graphComponent = (com.mxgraph.swing.mxGraphComponent) jGraphTPanel.getComponent(0);
+		graphComponent.refresh();
+		graphComponent.revalidate();
+		graphComponent.repaint();
+    }//GEN-LAST:event_formatButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton autoWidthButton;
@@ -775,6 +807,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     private javax.swing.JTextField filterGroupTextField;
     private javax.swing.JTextField filterPermissionTextField;
     private javax.swing.JTextField filterTextField;
+    private javax.swing.JButton formatButton;
     private javax.swing.JPanel groupPanel;
     private javax.swing.JTable groupTable;
     private javax.swing.JButton itemButton;
@@ -789,6 +822,7 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JToolBar jToolBar3;
     private javax.swing.JToolBar jToolBar4;
+    private javax.swing.JComboBox<String> layoutComboBox;
     private javax.swing.JPanel listPanel;
     private javax.swing.JTable listTable;
     private javax.swing.JPanel permissionGraphPanel;
@@ -800,5 +834,22 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     private javax.swing.JButton refreshPermissionGraphButton;
     private javax.swing.JButton viewButton;
     // End of variables declaration//GEN-END:variables
+
+	private void addGroupMemberToChart(mxGraph mxGraph, Object parent, Object parentVertex, int groupId, String groupName) {
+		String command = MainFrame.setting.m365Path + " spo group member list --webUrl " + webUrl + " --groupId " + groupId + " --output json";
+		System.out.println(command);
+		String json = MyLib.run(command);
+		org.json.JSONArray arr = new org.json.JSONArray(json);
+		for (int i = 0; i < arr.length(); i++) {
+			org.json.JSONObject member = arr.getJSONObject(i);
+			String memberName = member.getString("Title");
+			System.out.println(">>> " + groupName + " <- " + memberName);
+			// Insert member vertex with a visible box style
+			String style = "shape=rectangle;rounded=1;fillColor=white;strokeColor=black;strokeWidth=1;";
+			Object memberVertex = mxGraph.insertVertex(parent, null, memberName, Math.random() * 400, Math.random() * 400, 0, 0, style);
+			mxGraph.updateCellSize(memberVertex);
+			mxGraph.insertEdge(parent, null, null, parentVertex, memberVertex);
+		}
+	}
 
 }
