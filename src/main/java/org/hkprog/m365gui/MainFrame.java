@@ -98,6 +98,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         m365guiLogoLabel = new hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel();
+        m365guiLogoLabel1 = new hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel6 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
@@ -118,12 +119,17 @@ public class MainFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel1.setLayout(new java.awt.BorderLayout());
 
         m365guiLogoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/m365gui.png"))); // NOI18N
         m365guiLogoLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         m365guiLogoLabel.setPreferredSize(new java.awt.Dimension(145, 50));
-        jPanel1.add(m365guiLogoLabel);
+        jPanel1.add(m365guiLogoLabel, java.awt.BorderLayout.WEST);
+
+        m365guiLogoLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hkps eng big blue.png"))); // NOI18N
+        m365guiLogoLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        m365guiLogoLabel1.setPreferredSize(new java.awt.Dimension(145, 50));
+        jPanel1.add(m365guiLogoLabel1, java.awt.BorderLayout.EAST);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
 
@@ -202,7 +208,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
-        setSize(new java.awt.Dimension(1784, 987));
+        setSize(new java.awt.Dimension(1307, 987));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -298,6 +304,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
     private hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel m365guiLogoLabel;
+    private hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel m365guiLogoLabel1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JScrollPane mainScrollPane;
     private org.hkprog.m365gui.spoPanel.SPOPanel sPOPanel1;
