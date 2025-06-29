@@ -757,9 +757,9 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				int groupId = group.getInt("Id");
 				System.out.println(">>> " + groupName);
 
-				String style = "shape=rectangle;rounded=1;fillColor=white;strokeColor=black;strokeWidth=1;";
-				Object groupVertex = mxGraph.insertVertex(parent, null, groupName, Math.random() * 400, Math.random() * 400, 0, 0, style);
-				mxGraph.updateCellSize(groupVertex);
+				String style = "shape=rectangle;rounded=1;fillColor=yellow;strokeColor=black;strokeWidth=1;";
+				Object groupVertex = mxGraph.insertVertex(parent, null, groupName, Math.random() * 400, Math.random() * 400, 80, 30);
+//				mxGraph.updateCellSize(groupVertex);
 
 				mxGraph.insertEdge(parent, null, null, site, groupVertex);
 
@@ -901,9 +901,9 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			String memberName = member.getString("Title");
 			System.out.println(">>> " + groupName + " <- " + memberName);
 			// Insert member vertex with a visible box style
-			String style = "shape=rectangle;rounded=1;fillColor=white;strokeColor=black;strokeWidth=1;";
-			Object memberVertex = mxGraph.insertVertex(parent, null, memberName, Math.random() * 400, Math.random() * 400, 0, 0, style);
-			mxGraph.updateCellSize(memberVertex);
+			String style = "shape=rectangle;rounded=1;fillColor=yellow;strokeColor=black;strokeWidth=1;";
+			Object memberVertex = mxGraph.insertVertex(parent, null, memberName, Math.random() * 400, Math.random() * 400, 80, 30);
+//			mxGraph.updateCellSize(memberVertex);
 			mxGraph.insertEdge(parent, null, null, parentVertex, memberVertex);
 		}
 	}

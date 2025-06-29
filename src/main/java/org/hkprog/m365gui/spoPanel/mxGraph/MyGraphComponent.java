@@ -24,7 +24,7 @@ public class MyGraphComponent extends mxGraphComponent {
 	@Override
 	protected void paintBackground(Graphics g) {
 		double scale = this.getGraph().getView().getScale();
-		super.paintGrid(g);
+		// super.paintGrid(g);
 
 		if (scale >= 0.5) {
 			Graphics2D g2 = (Graphics2D) g;
@@ -38,11 +38,5 @@ public class MyGraphComponent extends mxGraphComponent {
 				}
 			}
 		}
-	}
-
-	@Override
-	public Component[] createComponents(mxCellState state
-	) {
-		return null;
 	}
 }
