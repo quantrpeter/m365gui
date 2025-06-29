@@ -106,6 +106,9 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
         refreshPermissionGraphButton = new javax.swing.JButton();
         layoutComboBox = new javax.swing.JComboBox<>();
         formatButton = new javax.swing.JButton();
+        zoomInButton = new javax.swing.JButton();
+        zoom100Button = new javax.swing.JButton();
+        zoomOutButton = new javax.swing.JButton();
         jGraphTPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
@@ -341,6 +344,39 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
             }
         });
         jToolBar4.add(formatButton);
+
+        zoomInButton.setText("+");
+        zoomInButton.setFocusable(false);
+        zoomInButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zoomInButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        zoomInButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zoomInButtonActionPerformed(evt);
+            }
+        });
+        jToolBar4.add(zoomInButton);
+
+        zoom100Button.setText("100%");
+        zoom100Button.setFocusable(false);
+        zoom100Button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zoom100Button.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        zoom100Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zoom100ButtonActionPerformed(evt);
+            }
+        });
+        jToolBar4.add(zoom100Button);
+
+        zoomOutButton.setText("-");
+        zoomOutButton.setFocusable(false);
+        zoomOutButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zoomOutButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        zoomOutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zoomOutButtonActionPerformed(evt);
+            }
+        });
+        jToolBar4.add(zoomOutButton);
 
         permissionGraphPanel.add(jToolBar4, java.awt.BorderLayout.PAGE_START);
 
@@ -798,6 +834,18 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		graphComponent.repaint();
     }//GEN-LAST:event_formatButtonActionPerformed
 
+    private void zoomInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomInButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_zoomInButtonActionPerformed
+
+    private void zoom100ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoom100ButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_zoom100ButtonActionPerformed
+
+    private void zoomOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zoomOutButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_zoomOutButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton autoWidthButton;
@@ -833,6 +881,9 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
     private javax.swing.JButton refreshPermissionButton;
     private javax.swing.JButton refreshPermissionGraphButton;
     private javax.swing.JButton viewButton;
+    private javax.swing.JButton zoom100Button;
+    private javax.swing.JButton zoomInButton;
+    private javax.swing.JButton zoomOutButton;
     // End of variables declaration//GEN-END:variables
 
 	private void addGroupMemberToChart(mxGraph mxGraph, Object parent, Object parentVertex, int groupId, String groupName) {
