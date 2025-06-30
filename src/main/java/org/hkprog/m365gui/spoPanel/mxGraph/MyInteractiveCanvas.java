@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.view.mxInteractiveCanvas;
 import com.mxgraph.view.mxCellState;
-import java.awt.Dimension;
+import javax.swing.ImageIcon;
 
 public class MyInteractiveCanvas extends mxInteractiveCanvas {
 
@@ -18,8 +18,9 @@ public class MyInteractiveCanvas extends mxInteractiveCanvas {
 	protected mxGraphComponent graphComponent;
 
 	Color borderColor = new Color(0, 102, 255);
-	// Color backgroundcolor = new Color(195, 219, 255);
-	Color backgroundcolor = new Color(255, 0, 0);
+	Color backgroundcolor = new Color(195, 219, 255);
+	ImageIcon siteIcon = new ImageIcon(getClass().getResource("/m365icon/site.png"));
+//	Color backgroundcolor = new Color(255, 0, 0);
 
 	public MyInteractiveCanvas(mxGraphComponent graphComponent) {
 		super(graphComponent);
@@ -83,6 +84,7 @@ public class MyInteractiveCanvas extends mxInteractiveCanvas {
 			Object userObject = graphComponent.getGraph().getModel().getValue(cell);
 			label = userObject != null ? userObject.toString() : cell.toString();
 		}
+		jLabel.setIcon(siteIcon);
 		jLabel.setText(label);
 		state.setWidth(jLabel.getPreferredSize().width);
 		state.setHeight(jLabel.getPreferredSize().height);
