@@ -275,6 +275,7 @@ public class SPOPanel extends javax.swing.JPanel {
         createSiteButton = new javax.swing.JButton();
         deleteSiteButton = new javax.swing.JButton();
         refreshTreeButton = new javax.swing.JButton();
+        browseTreeButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
 
         setLayout(new java.awt.CardLayout());
@@ -344,13 +345,20 @@ public class SPOPanel extends javax.swing.JPanel {
         commandBarPanel.add(deleteSiteButton);
 
         refreshTreeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/famfamfam/arrow_refresh.png"))); // NOI18N
-        refreshTreeButton.setText("Refresh");
         refreshTreeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshTreeButtonActionPerformed(evt);
             }
         });
         commandBarPanel.add(refreshTreeButton);
+
+        browseTreeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/famfamfam/world.png"))); // NOI18N
+        browseTreeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseTreeButtonActionPerformed(evt);
+            }
+        });
+        commandBarPanel.add(browseTreeButton);
 
         jPanel1.add(commandBarPanel, java.awt.BorderLayout.PAGE_START);
 
@@ -450,8 +458,26 @@ public class SPOPanel extends javax.swing.JPanel {
 		commandBarPanel.revalidate(); // Trigger layout update
     }//GEN-LAST:event_jSplitPane1PropertyChange
 
+    private void browseTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseTreeButtonActionPerformed
+        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) siteTree.getLastSelectedPathComponent();
+        if (selectedNode != null && selectedNode.getUserObject() instanceof SiteInfo) {
+        	SiteInfo siteInfo = (SiteInfo) selectedNode.getUserObject();
+        	String siteUrl = siteInfo.url;
+        	if (siteUrl != null && !siteUrl.isEmpty()) {
+        		try {
+        			java.awt.Desktop.getDesktop().browse(new java.net.URI(siteUrl));
+        		} catch (Exception ex) {
+        			javax.swing.JOptionPane.showMessageDialog(this, "Failed to open site URL: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        		}
+        	}
+        } else {
+        	javax.swing.JOptionPane.showMessageDialog(this, "Please select a site node to browse.", "No Site Selected", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_browseTreeButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton browseTreeButton;
     private javax.swing.JPanel commandBarPanel;
     private javax.swing.JButton createSiteButton;
     private javax.swing.JButton deleteSiteButton;
