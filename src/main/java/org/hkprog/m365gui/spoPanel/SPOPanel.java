@@ -1,5 +1,8 @@
 package org.hkprog.m365gui.spoPanel;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -267,7 +270,7 @@ public class SPOPanel extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         siteTree = new javax.swing.JTree();
-        jPanel4 = new javax.swing.JPanel();
+        commandBarPanel = new javax.swing.JPanel();
         filterTextField = new javax.swing.JTextField();
         createSiteButton = new javax.swing.JButton();
         deleteSiteButton = new javax.swing.JButton();
@@ -286,19 +289,24 @@ public class SPOPanel extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(120, 120, 120)
                 .addComponent(jLabel1)
-                .addContainerGap(704, Short.MAX_VALUE))
+                .addContainerGap(881, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(92, 92, 92)
                 .addComponent(jLabel1)
-                .addContainerGap(530, Short.MAX_VALUE))
+                .addContainerGap(674, Short.MAX_VALUE))
         );
 
         add(jPanel3, "loadingCard");
 
         jSplitPane1.setDividerLocation(450);
+        jSplitPane1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jSplitPane1PropertyChange(evt);
+            }
+        });
 
         jPanel1.setLayout(new java.awt.BorderLayout());
 
@@ -312,8 +320,12 @@ public class SPOPanel extends javax.swing.JPanel {
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
+        java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout();
+        flowLayout1.setAlignOnBaseline(true);
+        commandBarPanel.setLayout(flowLayout1);
+
         filterTextField.setPreferredSize(new java.awt.Dimension(200, 26));
-        jPanel4.add(filterTextField);
+        commandBarPanel.add(filterTextField);
 
         createSiteButton.setText("Create");
         createSiteButton.addActionListener(new java.awt.event.ActionListener() {
@@ -321,7 +333,7 @@ public class SPOPanel extends javax.swing.JPanel {
                 createSiteButtonActionPerformed(evt);
             }
         });
-        jPanel4.add(createSiteButton);
+        commandBarPanel.add(createSiteButton);
 
         deleteSiteButton.setText("Del");
         deleteSiteButton.addActionListener(new java.awt.event.ActionListener() {
@@ -329,17 +341,18 @@ public class SPOPanel extends javax.swing.JPanel {
                 deleteSiteButtonActionPerformed(evt);
             }
         });
-        jPanel4.add(deleteSiteButton);
+        commandBarPanel.add(deleteSiteButton);
 
+        refreshTreeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/famfamfam/arrow_refresh.png"))); // NOI18N
         refreshTreeButton.setText("Refresh");
         refreshTreeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshTreeButtonActionPerformed(evt);
             }
         });
-        jPanel4.add(refreshTreeButton);
+        commandBarPanel.add(refreshTreeButton);
 
-        jPanel1.add(jPanel4, java.awt.BorderLayout.PAGE_START);
+        jPanel1.add(commandBarPanel, java.awt.BorderLayout.PAGE_START);
 
         jSplitPane1.setLeftComponent(jPanel1);
 
@@ -347,11 +360,11 @@ public class SPOPanel extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 434, Short.MAX_VALUE)
+            .addGap(0, 611, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 645, Short.MAX_VALUE)
+            .addGap(0, 789, Short.MAX_VALUE)
         );
 
         jSplitPane1.setRightComponent(jPanel2);
@@ -373,48 +386,73 @@ public class SPOPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_siteTreeMouseClicked
 
     private void createSiteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createSiteButtonActionPerformed
-        showCreateSiteDialog();
+		showCreateSiteDialog();
     }//GEN-LAST:event_createSiteButtonActionPerformed
 
     private void refreshTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshTreeButtonActionPerformed
-        loadSitesInBackground();
+		loadSitesInBackground();
     }//GEN-LAST:event_refreshTreeButtonActionPerformed
 
     private void deleteSiteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteSiteButtonActionPerformed
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) siteTree.getLastSelectedPathComponent();
-        if (selectedNode == null || !(selectedNode.getUserObject() instanceof SiteInfo)) {
-            JOptionPane.showMessageDialog(this, "Please select a site to delete.", "No Site Selected", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        SiteInfo siteInfo = (SiteInfo) selectedNode.getUserObject();
-        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete site: " + siteInfo.title + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-        if (confirm != JOptionPane.YES_OPTION) return;
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) siteTree.getLastSelectedPathComponent();
+		if (selectedNode == null || !(selectedNode.getUserObject() instanceof SiteInfo)) {
+			JOptionPane.showMessageDialog(this, "Please select a site to delete.", "No Site Selected", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		SiteInfo siteInfo = (SiteInfo) selectedNode.getUserObject();
+		int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete site: " + siteInfo.title + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+		if (confirm != JOptionPane.YES_OPTION) {
+			return;
+		}
 
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                try {
-                    String command = MainFrame.setting.m365Path + " spo site remove -f --url \"" + siteInfo.url + "\"";
-                    System.out.println("Deleting site with command: " + command);
-                    String result = MyLib.run(command);
-                    System.out.println("Site delete result: " + result);
-                    javax.swing.SwingUtilities.invokeLater(() -> {
-                        JOptionPane.showMessageDialog(SPOPanel.this, "Site '" + siteInfo.title + "' deleted successfully!", "Site Deleted", JOptionPane.INFORMATION_MESSAGE);
-                        loadSitesInBackground();
-                    });
-                } catch (Exception ex) {
-                    javax.swing.SwingUtilities.invokeLater(() -> {
-                        JOptionPane.showMessageDialog(SPOPanel.this, "Error deleting site: " + ex.getMessage(), "Delete Error", JOptionPane.ERROR_MESSAGE);
-                    });
-                }
-                return null;
-            }
-        };
-        worker.execute();
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				try {
+					String command = MainFrame.setting.m365Path + " spo site remove -f --url \"" + siteInfo.url + "\"";
+					System.out.println("Deleting site with command: " + command);
+					String result = MyLib.run(command);
+					System.out.println("Site delete result: " + result);
+					javax.swing.SwingUtilities.invokeLater(() -> {
+						JOptionPane.showMessageDialog(SPOPanel.this, "Site '" + siteInfo.title + "' deleted successfully!", "Site Deleted", JOptionPane.INFORMATION_MESSAGE);
+						loadSitesInBackground();
+					});
+				} catch (Exception ex) {
+					javax.swing.SwingUtilities.invokeLater(() -> {
+						JOptionPane.showMessageDialog(SPOPanel.this, "Error deleting site: " + ex.getMessage(), "Delete Error", JOptionPane.ERROR_MESSAGE);
+					});
+				}
+				return null;
+			}
+		};
+		worker.execute();
     }//GEN-LAST:event_deleteSiteButtonActionPerformed
+
+    private void jSplitPane1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jSplitPane1PropertyChange
+		int maxWidth = commandBarPanel.getWidth() > 0 ? commandBarPanel.getWidth() : 400;
+		int currentWidth = 0;
+		int rowCount = 1;
+		int maxHeight = 0;
+		int hgap = ((FlowLayout) commandBarPanel.getLayout()).getHgap();
+		int vgap = ((FlowLayout) commandBarPanel.getLayout()).getVgap();
+
+		for (Component comp : commandBarPanel.getComponents()) {
+			Dimension compSize = comp.getPreferredSize();
+			currentWidth += compSize.width + hgap;
+			if (currentWidth > maxWidth && maxWidth > 0) {
+				rowCount++;
+				currentWidth = compSize.width + hgap;
+			}
+			maxHeight = Math.max(maxHeight, compSize.height);
+		}
+
+		commandBarPanel.setPreferredSize(new Dimension(maxWidth, rowCount * (maxHeight + vgap) + vgap));
+		commandBarPanel.revalidate(); // Trigger layout update
+    }//GEN-LAST:event_jSplitPane1PropertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel commandBarPanel;
     private javax.swing.JButton createSiteButton;
     private javax.swing.JButton deleteSiteButton;
     private javax.swing.JTextField filterTextField;
@@ -422,7 +460,6 @@ public class SPOPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JButton refreshTreeButton;
@@ -435,7 +472,7 @@ public class SPOPanel extends javax.swing.JPanel {
 	private void showCreateSiteDialog() {
 		CreateSiteDialog dialog = new CreateSiteDialog(null, true);
 		dialog.setVisible(true);
-		
+
 		if (dialog.isOkPressed()) {
 			String title = dialog.getSiteTitle();
 			String alias = dialog.getAlias();
@@ -443,11 +480,11 @@ public class SPOPanel extends javax.swing.JPanel {
 			String template = dialog.getTemplate();
 			String description = dialog.getDescription();
 			String owner = dialog.getOwnerEmail();
-			
+
 			createSiteInBackground(title, alias, type, template, description, owner);
 		}
 	}
-	
+
 	/**
 	 * Creates a SharePoint site in background using M365 CLI
 	 */
@@ -457,55 +494,55 @@ public class SPOPanel extends javax.swing.JPanel {
 			protected Void doInBackground() throws Exception {
 				try {
 					String command;
-					
+
 					if ("CommunicationSite".equals(type)) {
 						// Create Communication Site
-						command = MainFrame.setting.m365Path + " spo site add" +
-								" --type CommunicationSite" +
-								" --title \"" + title + "\"" +
-								" --alias \"" + alias + "\"" +
-								" --shareByEmailEnabled" +
-								" --siteDesign " + template;
-						
+						command = MainFrame.setting.m365Path + " spo site add"
+								+ " --type CommunicationSite"
+								+ " --title \"" + title + "\""
+								+ " --alias \"" + alias + "\""
+								+ " --shareByEmailEnabled"
+								+ " --siteDesign " + template;
+
 						if (!description.isEmpty()) {
 							command += " --description \"" + description + "\"";
 						}
 					} else {
 						// Create Team Site
-						command = MainFrame.setting.m365Path + " spo site add" +
-								" --type TeamSite" +
-								" --title \"" + title + "\"" +
-								" --alias \"" + alias + "\"" +
-								" --owners \"" + owners + "\"" +
-								" --isPublic false";
-						
+						command = MainFrame.setting.m365Path + " spo site add"
+								+ " --type TeamSite"
+								+ " --title \"" + title + "\""
+								+ " --alias \"" + alias + "\""
+								+ " --owners \"" + owners + "\""
+								+ " --isPublic false";
+
 						if (!description.isEmpty()) {
 							command += " --description \"" + description + "\"";
 						}
 					}
-					
+
 					System.out.println("Creating site with command: " + command);
 					String result = MyLib.run(command);
 					System.out.println("Site creation result: " + result);
-					
+
 					// Show success message
 					javax.swing.SwingUtilities.invokeLater(() -> {
-						JOptionPane.showMessageDialog(SPOPanel.this, 
-							"Site '" + title + "' created successfully!", 
-							"Site Created", 
-							JOptionPane.INFORMATION_MESSAGE);
-						
+						JOptionPane.showMessageDialog(SPOPanel.this,
+								"Site '" + title + "' created successfully!",
+								"Site Created",
+								JOptionPane.INFORMATION_MESSAGE);
+
 						// Refresh the site list
 						loadSitesInBackground();
 					});
-					
+
 				} catch (Exception ex) {
 					// Show error message
 					javax.swing.SwingUtilities.invokeLater(() -> {
-						JOptionPane.showMessageDialog(SPOPanel.this, 
-							"Error creating site: " + ex.getMessage(), 
-							"Creation Error", 
-							JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(SPOPanel.this,
+								"Error creating site: " + ex.getMessage(),
+								"Creation Error",
+								JOptionPane.ERROR_MESSAGE);
 					});
 				}
 				return null;
