@@ -276,6 +276,8 @@ public class SPOPanel extends javax.swing.JPanel {
         deleteSiteButton = new javax.swing.JButton();
         refreshTreeButton = new javax.swing.JButton();
         browseTreeButton = new javax.swing.JButton();
+        siteContentTreeButton = new javax.swing.JButton();
+        siteSettingTreeButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
 
         setLayout(new java.awt.CardLayout());
@@ -359,6 +361,22 @@ public class SPOPanel extends javax.swing.JPanel {
             }
         });
         commandBarPanel.add(browseTreeButton);
+
+        siteContentTreeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/famfamfam/brick.png"))); // NOI18N
+        siteContentTreeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                siteContentTreeButtonActionPerformed(evt);
+            }
+        });
+        commandBarPanel.add(siteContentTreeButton);
+
+        siteSettingTreeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/famfamfam/wrench.png"))); // NOI18N
+        siteSettingTreeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                siteSettingTreeButtonActionPerformed(evt);
+            }
+        });
+        commandBarPanel.add(siteSettingTreeButton);
 
         jPanel1.add(commandBarPanel, java.awt.BorderLayout.PAGE_START);
 
@@ -459,21 +477,16 @@ public class SPOPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jSplitPane1PropertyChange
 
     private void browseTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseTreeButtonActionPerformed
-        DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) siteTree.getLastSelectedPathComponent();
-        if (selectedNode != null && selectedNode.getUserObject() instanceof SiteInfo) {
-        	SiteInfo siteInfo = (SiteInfo) selectedNode.getUserObject();
-        	String siteUrl = siteInfo.url;
-        	if (siteUrl != null && !siteUrl.isEmpty()) {
-        		try {
-        			java.awt.Desktop.getDesktop().browse(new java.net.URI(siteUrl));
-        		} catch (Exception ex) {
-        			javax.swing.JOptionPane.showMessageDialog(this, "Failed to open site URL: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        		}
-        	}
-        } else {
-        	javax.swing.JOptionPane.showMessageDialog(this, "Please select a site node to browse.", "No Site Selected", javax.swing.JOptionPane.WARNING_MESSAGE);
-        }
+		browseSite(null);
     }//GEN-LAST:event_browseTreeButtonActionPerformed
+
+    private void siteContentTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_siteContentTreeButtonActionPerformed
+		browseSite("/_layouts/viewlsts.aspx");
+    }//GEN-LAST:event_siteContentTreeButtonActionPerformed
+
+    private void siteSettingTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_siteSettingTreeButtonActionPerformed
+		browseSite("/_layouts/settings.aspx");
+    }//GEN-LAST:event_siteSettingTreeButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -489,6 +502,8 @@ public class SPOPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JButton refreshTreeButton;
+    private javax.swing.JButton siteContentTreeButton;
+    private javax.swing.JButton siteSettingTreeButton;
     private javax.swing.JTree siteTree;
     // End of variables declaration//GEN-END:variables
 
@@ -575,6 +590,23 @@ public class SPOPanel extends javax.swing.JPanel {
 			}
 		};
 		worker.execute();
+	}
+
+	private void browseSite(String path) {
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) siteTree.getLastSelectedPathComponent();
+		if (selectedNode != null && selectedNode.getUserObject() instanceof SiteInfo) {
+			SiteInfo siteInfo = (SiteInfo) selectedNode.getUserObject();
+			String siteUrl = siteInfo.url + path;
+			if (siteUrl != null && !siteUrl.isEmpty()) {
+				try {
+					java.awt.Desktop.getDesktop().browse(new java.net.URI(siteUrl));
+				} catch (Exception ex) {
+					javax.swing.JOptionPane.showMessageDialog(this, "Failed to open site URL: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		} else {
+			javax.swing.JOptionPane.showMessageDialog(this, "Please select a site node to browse.", "No Site Selected", javax.swing.JOptionPane.WARNING_MESSAGE);
+		}
 	}
 
 }
