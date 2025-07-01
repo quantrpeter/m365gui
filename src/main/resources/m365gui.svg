@@ -4,6 +4,6 @@
     <rect x="40" y="102" width="40" height="10" rx="3" fill="#50E6FF"/>
     <rect x="50" y="92" width="20" height="6" rx="2" fill="#F3F3F3"/>
     <text x="60" y="27" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" fill="#F3F3F3">GUI</text>
-    <text x="60" y="80" text-anchor="middle" dominant-baseline="middle" font-family="Segoe UI, Arial, sans-serif" font-size="60" font-weight="bold" fill="#F3F3F3">365</text>
+    <text x="60" y="66" text-anchor="middle" dominant-baseline="middle" font-family="Segoe UI, Arial, sans-serif" font-size="60" font-weight="bold" fill="#F3F3F3">365</text>
   </g>
 </svg>

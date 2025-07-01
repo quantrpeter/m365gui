@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="INFO">
     <Appenders>
+        <!-- LogEditorPane Appender -->
+        <LogEditorPaneAppender name="LogEditorPane">
+            <PatternLayout pattern="[%d{HH:mm:ss}] %-5level: %msg%n"/>
+        </LogEditorPaneAppender>
+		
         <!-- Console Appender -->
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
@@ -15,12 +20,14 @@
     <Loggers>
         <!-- Root Logger -->
         <Root level="INFO">
+            <AppenderRef ref="LogEditorPane"/>
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FileAppender"/>
         </Root>
         
         <!-- Package-specific logger -->
         <Logger name="org.hkprog.m365gui" level="DEBUG" additivity="false">
+            <AppenderRef ref="LogEditorPane"/>
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FileAppender"/>
         </Logger>

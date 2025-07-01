@@ -1,7 +1,7 @@
 package org.hkprog.m365gui.commandPanel;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hkprog.m365gui.MyLib;
 
 /**
@@ -10,6 +10,7 @@ import org.hkprog.m365gui.MyLib;
  */
 public class CommandPanel extends javax.swing.JPanel implements CommandPanelInterface {
 
+	private static final Logger logger = LogManager.getLogger(CommandPanel.class);
 	String command;
 
 	/**
@@ -74,7 +75,7 @@ public class CommandPanel extends javax.swing.JPanel implements CommandPanelInte
 			String str = MyLib.run(command);
 			return str;
 		} catch (Exception ex) {
-			Logger.getLogger(CommandPanel.class.getName()).log(Level.SEVERE, null, ex);
+			logger.error(ex);
 			return ex.getMessage();
 		}
 	}

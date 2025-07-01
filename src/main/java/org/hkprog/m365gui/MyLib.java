@@ -31,10 +31,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author peter
  */
 public class MyLib {
-
+	
 	private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(MyLib.class);
-
+	
 	private static List<String> splitCommand(String command) {
+		logger.info("run: " + command);
 		List<String> tokens = new ArrayList<>();
 		boolean inQuotes = false;
 		StringBuilder sb = new StringBuilder();
@@ -64,7 +65,7 @@ public class MyLib {
 		}
 		return tokens;
 	}
-
+	
 	public static String run(String command) {
 		try {
 			Setting setting = new Setting();
@@ -100,7 +101,7 @@ public class MyLib {
 		}
 		return null;
 	}
-
+	
 	public static void exportTableToExcel(JComponent parent, JTable mainTable, String filename, String sheetName) {
 		if (mainTable.getRowCount() == 0) {
 			JOptionPane.showMessageDialog(parent, "No data to export!", "Export Error", JOptionPane.WARNING_MESSAGE);
@@ -114,7 +115,7 @@ public class MyLib {
 
 		// Generate default filename
 		fileChooser.setSelectedFile(new File(filename));
-
+		
 		int userSelection = fileChooser.showSaveDialog(parent);
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = fileChooser.getSelectedFile();
@@ -168,7 +169,7 @@ public class MyLib {
 							for (int col = 0; col < mainTable.getColumnCount(); col++) {
 								Cell cell = dataRow.createCell(col);
 								Object value = mainTable.getValueAt(row, col);
-
+								
 								if (value != null) {
 									if (value instanceof Number) {
 										cell.setCellValue(((Number) value).doubleValue());
@@ -195,7 +196,7 @@ public class MyLib {
 						try (FileOutputStream fileOut = new FileOutputStream(fileToSave)) {
 							workbook.write(fileOut);
 						}
-
+						
 					} catch (IOException e) {
 						javax.swing.SwingUtilities.invokeLater(() -> {
 							JOptionPane.showMessageDialog(parent,
@@ -206,7 +207,7 @@ public class MyLib {
 					}
 					return null;
 				}
-
+				
 				@Override
 				protected void done() {
 					JOptionPane.showMessageDialog(parent,

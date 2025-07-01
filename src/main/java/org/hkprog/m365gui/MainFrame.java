@@ -3,13 +3,14 @@ package org.hkprog.m365gui;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import hk.quantr.javalib.CommonLib;
 import hk.quantr.setting.library.QuantrSettingLibrary;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.hkprog.m365gui.commandPanel.CommandPanel;
@@ -22,6 +23,7 @@ import org.hkprog.m365gui.commandPanel.ResultPanel;
 public class MainFrame extends javax.swing.JFrame {
 
 	public static Setting setting = new Setting();
+	private static final Logger logger = LogManager.getLogger(MainFrame.class);
 
 	/**
 	 * Creates new form MainFrame
@@ -30,13 +32,18 @@ public class MainFrame extends javax.swing.JFrame {
 		try {
 			QuantrSettingLibrary.load("m365gui", setting);
 		} catch (IOException ex) {
-			Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+			logger.error(ex);
 		} catch (IllegalArgumentException ex) {
-			Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+			logger.error(ex);
 		} catch (IllegalAccessException ex) {
-			Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+			logger.error(ex);
 		}
 		initComponents();
+		// Only set the editor pane for the appender instance created by log4j2.xml
+		LogEditorPaneAppender.setEditorPane(logEditorPane);
+
+		logger.info("start");
+
 		// Load Microsoft 365 CLI commands from JSON file
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new TreeNodeData("Microsoft 365 CLI", null, null));
 		try {
@@ -116,6 +123,9 @@ public class MainFrame extends javax.swing.JFrame {
         settingButton = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         sPOPanel1 = new org.hkprog.m365gui.spoPanel.SPOPanel();
+        logPanel = new javax.swing.JPanel();
+        logScrollPane = new javax.swing.JScrollPane();
+        logEditorPane = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -206,6 +216,14 @@ public class MainFrame extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("SPO", jPanel7);
 
+        logPanel.setLayout(new java.awt.BorderLayout());
+
+        logScrollPane.setViewportView(logEditorPane);
+
+        logPanel.add(logScrollPane, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Log", logPanel);
+
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         setSize(new java.awt.Dimension(1307, 987));
@@ -259,7 +277,7 @@ public class MainFrame extends javax.swing.JFrame {
 				setting.m365Path = dialog.m365PathTextField.getText();
 				QuantrSettingLibrary.save("m365gui", setting);
 			} catch (Exception ex) {
-				Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+				logger.error(ex);
 			}
 		}
     }//GEN-LAST:event_settingButtonActionPerformed
@@ -303,6 +321,9 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JEditorPane logEditorPane;
+    private javax.swing.JPanel logPanel;
+    private javax.swing.JScrollPane logScrollPane;
     private hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel m365guiLogoLabel;
     private hk.quantr.javalib.swing.advancedswing.highdpijlabel.HighDPIJLabel m365guiLogoLabel1;
     private javax.swing.JPanel mainPanel;
