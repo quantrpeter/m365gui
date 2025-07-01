@@ -86,14 +86,33 @@ public class MyInteractiveCanvas extends mxInteractiveCanvas {
 		}
 		jLabel.setIcon(siteIcon);
 		jLabel.setText(label);
-		state.setWidth(jLabel.getPreferredSize().width);
-		state.setHeight(jLabel.getPreferredSize().height);
+		int preferredWidth = jLabel.getPreferredSize().width;
+		int preferredHeight = jLabel.getPreferredSize().height;
+		updateCellSizeInModel(cell, preferredWidth, preferredHeight);
 
 		rendererPane.paintComponent(g, jLabel, graphComponent,
 				(int) (state.getX() + translate.getX()),
 				(int) (state.getY() + translate.getY()),
 				jLabel.getPreferredSize().width, jLabel.getPreferredSize().height, true);
 		return jLabel;
+	}
+
+	private void updateCellSizeInModel(Object cell, int width, int height) {
+		if (graphComponent != null && graphComponent.getGraph() != null && cell != null) {
+			com.mxgraph.model.mxIGraphModel model = graphComponent.getGraph().getModel();
+			com.mxgraph.model.mxGeometry geometry = model.getGeometry(cell);
+			if (geometry != null && (geometry.getWidth() != width || geometry.getHeight() != height)) {
+				model.beginUpdate();
+				try {
+					geometry = (com.mxgraph.model.mxGeometry) geometry.clone();
+					geometry.setWidth(width);
+					geometry.setHeight(height);
+					model.setGeometry(cell, geometry);
+				} finally {
+					model.endUpdate();
+				}
+			}
+		}
 	}
 
 }
