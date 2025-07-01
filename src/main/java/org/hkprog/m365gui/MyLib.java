@@ -96,7 +96,7 @@ public class MyLib {
 				System.err.println("Errors:\n" + errorOutput.toString());
 			}
 			return output.toString();
-		} catch (IOException | IllegalAccessException | IllegalArgumentException | InterruptedException ex) {
+		} catch (Exception ex) {
 			logger.error("Error executing command", ex);
 		}
 		return null;

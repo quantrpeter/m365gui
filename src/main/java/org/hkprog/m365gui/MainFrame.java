@@ -2,9 +2,10 @@ package org.hkprog.m365gui;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import hk.quantr.javalib.CommonLib;
+import hk.quantr.setting.library.JFrameStateManager;
 import hk.quantr.setting.library.QuantrSettingLibrary;
+import hk.quantr.setting.library.annotation.SaveJFrame;
 
-import java.io.IOException;
 import java.io.InputStream;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -20,6 +21,7 @@ import org.hkprog.m365gui.commandPanel.ResultPanel;
  *
  * @author Peter <peter@quantr.hk>
  */
+@SaveJFrame
 public class MainFrame extends javax.swing.JFrame {
 
 	public static Setting setting = new Setting();
@@ -31,14 +33,11 @@ public class MainFrame extends javax.swing.JFrame {
 	public MainFrame() {
 		try {
 			QuantrSettingLibrary.load("m365gui", setting);
-		} catch (IOException ex) {
-			logger.error(ex);
-		} catch (IllegalArgumentException ex) {
-			logger.error(ex);
-		} catch (IllegalAccessException ex) {
+		} catch (Exception ex) {
 			logger.error(ex);
 		}
 		initComponents();
+		JFrameStateManager.attachStateSaver(this);
 		// Only set the editor pane for the appender instance created by log4j2.xml
 		LogEditorPaneAppender.setEditorPane(logEditorPane);
 

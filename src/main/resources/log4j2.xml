@@ -3,7 +3,7 @@
     <Appenders>
         <!-- LogEditorPane Appender -->
         <LogEditorPaneAppender name="LogEditorPane">
-            <PatternLayout pattern="[%d{HH:mm:ss}] %-5level: %msg%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </LogEditorPaneAppender>
 		
         <!-- Console Appender -->

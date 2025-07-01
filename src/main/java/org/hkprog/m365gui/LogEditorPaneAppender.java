@@ -11,14 +11,17 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.status.StatusLogger;
 import java.io.Serializable;
 
 @Plugin(name = "LogEditorPaneAppender", category = "Core", elementType = Appender.ELEMENT_TYPE, printObject = true)
 public class LogEditorPaneAppender extends AbstractAppender {
     private static JEditorPane editorPane;
+    private static final org.apache.logging.log4j.Logger LOGGER = StatusLogger.getLogger();
 
     protected LogEditorPaneAppender(String name, Filter filter, Layout<? extends Serializable> layout) {
         super(name, filter, layout, true);
+        LOGGER.info("LogEditorPaneAppender initialized");
     }
 
     public static void setEditorPane(JEditorPane pane) {
