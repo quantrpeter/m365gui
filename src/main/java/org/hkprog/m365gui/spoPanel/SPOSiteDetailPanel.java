@@ -2,6 +2,8 @@ package org.hkprog.m365gui.spoPanel;
 
 import com.mxgraph.view.mxGraph;
 import hk.quantr.javalib.CommonLib;
+import hk.quantr.javalib.swing.advancedswing.jtable.SortableTableModel;
+import hk.quantr.javalib.swing.advancedswing.jtable.TableSorterColumnListener;
 import java.net.URI;
 import org.hkprog.m365gui.MainFrame;
 import org.hkprog.m365gui.MyLib;
@@ -401,7 +403,8 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 		try {
 			org.json.JSONArray arr = new org.json.JSONArray(json);
 			TableModelList model = new TableModelList(arr);
-			listTable.setModel(model);
+			SortableTableModel sortableTableModel = new SortableTableModel(model);
+			listTable.setModel(sortableTableModel);
 			CommonLib.autoResizeColumnWithHeader(listTable);
 			// Store original data and columns for filtering
 			originalData.clear();
@@ -425,6 +428,9 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 					}
 				}
 			}
+			
+			TableSorterColumnListener tableSorterColumnListener = new TableSorterColumnListener(listTable, sortableTableModel);
+			listTable.getTableHeader().addMouseListener(tableSorterColumnListener);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
