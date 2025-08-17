@@ -477,7 +477,7 @@ public class SPOPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jSplitPane1PropertyChange
 
     private void browseTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseTreeButtonActionPerformed
-		browseSite(null);
+		browseSite("");
     }//GEN-LAST:event_browseTreeButtonActionPerformed
 
     private void siteContentTreeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_siteContentTreeButtonActionPerformed

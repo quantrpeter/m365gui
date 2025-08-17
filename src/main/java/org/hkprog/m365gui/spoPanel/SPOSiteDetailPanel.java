@@ -629,7 +629,12 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			data[i][1] = row[1];
 			permissionTableOriginalData.add(row);
 		}
-		javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
+		javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"}){
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
 		permissionTable.setModel(model);
 		CommonLib.autoResizeColumnWithHeader(permissionTable);
     }//GEN-LAST:event_refreshPermissionButtonActionPerformed
@@ -643,7 +648,12 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 				data[i][0] = permissionTableOriginalData.get(i)[0];
 				data[i][1] = permissionTableOriginalData.get(i)[1];
 			}
-			javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
+			javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"}){
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
 			permissionTable.setModel(model);
 			CommonLib.autoResizeColumnWithHeader(permissionTable);
 			return;
@@ -659,7 +669,12 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 			data[i][0] = filtered.get(i)[0];
 			data[i][1] = filtered.get(i)[1];
 		}
-		javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"});
+		javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, new String[]{"Key", "Value"}){
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
 		permissionTable.setModel(model);
 		CommonLib.autoResizeColumnWithHeader(permissionTable);
     }//GEN-LAST:event_filterPermissionTextFieldKeyReleased
@@ -688,7 +703,12 @@ public class SPOSiteDetailPanel extends javax.swing.JPanel {
 					data[i][j] = (value instanceof org.json.JSONObject || value instanceof org.json.JSONArray) ? value.toString() : value;
 				}
 			}
-			javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, columns);
+			javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, columns) {
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
 			groupTable.setModel(model);
 			CommonLib.autoResizeColumnWithHeader(groupTable);
 		} catch (Exception ex) {
